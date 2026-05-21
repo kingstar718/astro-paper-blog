@@ -50,6 +50,17 @@ const rssHref = getRelativeLocaleUrl(
       preload={[{ subset: "latin", weight: 400, style: "normal" }]}
     />
 
+    <!-- Noto Sans SC via Google Fonts CDN (CJK fonts are too large for Astro font system) -->
+    <link
+      rel="preconnect"
+      href="https://fonts.googleapis.com"
+      crossorigin
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&display=swap"
+    />
+
     <!-- Primary meta -->
     <title>{title}</title>
     <meta name="title" content={title} />
