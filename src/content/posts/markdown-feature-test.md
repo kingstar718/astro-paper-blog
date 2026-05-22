@@ -3,7 +3,6 @@ title: Markdown 功能测试 — 中文排版验证
 author: 陆上江南
 pubDatetime: 2025-05-20T08:00:00Z
 modDatetime: 2025-05-21T10:30:00Z
-featured: true
 draft: false
 tags:
   - Markdown
