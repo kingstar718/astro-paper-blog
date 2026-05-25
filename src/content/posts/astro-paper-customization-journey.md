@@ -57,3 +57,12 @@ description: 持续记录从 AstroPaper 模板出发，将博客一步步打磨�
 具体清理：删除 `ShareLinks.astro` 组件及其在文章页的引用，移除 `astro-paper.config.ts` 和类型定义中的 `shareLinks` 配置，删除 i18n 中 `sharePostIntro` 等翻译键，清理 facebook、telegram、pinterest、whatsapp 四个纯分享用途的 SVG 图标。
 
 顺手把 zh.ts 中页脚的"版权所有 保留所有权利"改回英文 `Copyright / All rights reserved.`——中文法律措辞放在个人博客上太突兀。
+
+## 2026-05-25 — 精简社交链接
+
+页脚社交图标从 4 个（GitHub、X、LinkedIn、邮箱）精简为 2 个，去掉国内基本不用的 X 和 LinkedIn，只保留 GitHub 和邮箱，并替换为实际地址：
+
+- GitHub: `https://github.com/kingstar718`
+- 邮箱: `kingstar718@foxmail.com`
+
+配置文件从 `astro-paper.config.ts` 的 `socials` 数组中移除对应条目即可，组件层面自动适配。
