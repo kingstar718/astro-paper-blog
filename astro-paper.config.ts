@@ -6,7 +6,7 @@ export default defineAstroPaperConfig({
     title: "陆上江南",
     description: "直道半生如汪洋，付一尾孤航。",
     author: "陆上江南",
-    profile: "https://satna.ing",
+    profile: "https://github.com/kingstar718",
     ogImage: "default-og.jpg",
     lang: "zh",
     timezone: "Asia/Shanghai",
@@ -24,7 +24,7 @@ export default defineAstroPaperConfig({
     showBackButton: true,
     editPost: {
       enabled: true,
-      url: "https://github.com/satnaing/astro-paper/edit/main/",
+      url: "https://github.com/kingstar718/astro-paper-blog/edit/main/",
     },
     search: "pagefind",
   },

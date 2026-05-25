@@ -66,3 +66,14 @@ description: 持续记录从 AstroPaper 模板出发，将博客一步步打磨�
 - 邮箱: `kingstar718@foxmail.com`
 
 配置文件从 `astro-paper.config.ts` 的 `socials` 数组中移除对应条目即可，组件层面自动适配。
+
+## 2026-05-25 — 配置修正与内容清理
+
+修正了两项残留的模板配置：
+
+- `profile` 链接从 `https://satna.ing` 改为 `https://github.com/kingstar718`
+- `editPost.url` 从 `satnaing/astro-paper` 改为 `kingstar718/astro-paper-blog`
+
+About 页面从英文模板介绍重写为简短的个人标识：「陆上江南的博客」。
+
+`examples/` 目录下 4 篇英文示例文章和根级 3 篇模板指导文章（`adding-new-post`、`customizing-astropaper-theme-color-schemes`、`how-to-configure-astropaper-theme`）全部设为草稿（`draft: true`），不再公开显示，但保留原文件以备后续参考。
