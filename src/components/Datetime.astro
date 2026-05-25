@@ -5,8 +5,6 @@ import timezone from "dayjs/plugin/timezone";
 import "dayjs/locale/zh-cn";
 import IconCalendar from "@/assets/icons/IconCalendar.svg";
 import config from "@/config";
-import { useTranslations } from "@/i18n";
-
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
@@ -25,8 +23,6 @@ const {
   class: className = "",
   timezone: postTimezone,
 } = Astro.props;
-
-const t = useTranslations(Astro.currentLocale);
 
 const isModified = modDatetime && modDatetime > pubDatetime;
 
