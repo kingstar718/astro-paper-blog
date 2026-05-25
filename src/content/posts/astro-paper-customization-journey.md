@@ -1,7 +1,7 @@
 ---
 author: kingstar718
 pubDatetime: 2026-05-25T00:00:00Z
-modDatetime: 2026-05-25T00:00:00Z
+modDatetime: 2026-05-25T18:30:00Z
 title: AstroPaper 博客改造日志
 featured: false
 draft: false
@@ -89,3 +89,21 @@ About 页面从英文模板介绍重写为简短的个人标识：「陆上江�
 **顺手清理**：`Datetime.astro` 中删除未使用的 `useTranslations` 导入和 `t` 变量，编译从 1 hint 变为 0 hints。
 
 最终编译结果：0 errors / 0 warnings / 0 hints，23 个页面正常生成。
+
+## 2026-05-25 — 字体本地化与英文字体补充
+
+彻底告别 Google Fonts CDN，全部字体回归本地文件。同时补上了之前缺失的英文正文字体和代码字体。
+
+**删除 CDN 依赖**：`Layout.astro` 中移除 Google Fonts `<link>` 标签和 `preconnect`，`fonts.css` 精简为纯 `@font-face` 规则。不再依赖任何外部字体服务。
+
+**新增英文字体 Inter**：正文用 `Inter`（400 + 700 两个字重），从 jsDelivr CDN 下载 woff2 放到 `public/fonts/`。Inter 是为屏幕阅读设计的无衬线字体，x-height 高、辨识度好，搭配中文宋体也不违和。单字重仅 24 KB。
+
+**新增代码字体 JetBrains Mono**：原计划用 Google Sans Code，但在 jsDelivr 上不可用（该字体未公开发布 woff2），改用 JetBrains Mono。程序员最熟悉的等宽字体之一，连字支持和字符区分度都很好，单字重 21 KB。
+
+**字体栈最终形态**：
+```css
+--font-app: "Noto Serif SC", "Inter", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+--font-code: "JetBrains Mono", ui-monospace, "Cascadia Code", "Source Code Pro", monospace;
+```
+
+中文走思源宋体，英文走 Inter，代码走 JetBrains Mono，各司其职。总字体包 10.7 MB（其中中文 10.7 MB，英文字体不到 70 KB），全部本地托管，零外部请求。
