@@ -12,9 +12,6 @@ export default {
   post: {
     publishedAt: "发布于",
     updatedAt: "更新于",
-    sharePostIntro: "分享这篇文章：",
-    sharePostOn: "在 {{platform}} 上分享",
-    sharePostViaEmail: "通过邮件分享",
     tagLabel: "标签",
     backToTop: "回到顶部",
     goBack: "返回",
@@ -34,8 +31,8 @@ export default {
     allPosts: "全部文章",
   },
   footer: {
-    copyright: "版权所有",
-    allRightsReserved: "保留所有权利。",
+    copyright: "Copyright",
+    allRightsReserved: "All rights reserved.",
   },
   pages: {
     tagTitle: "标签",
