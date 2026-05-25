@@ -7,7 +7,7 @@
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
-  --font-app: "Google Sans Code", "Noto Serif SC", sans-serif;
+  --font-app: "Noto Serif SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
 }
 
 /* Light theme values */
