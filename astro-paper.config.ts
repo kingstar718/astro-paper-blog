@@ -7,7 +7,6 @@ export default defineAstroPaperConfig({
     description: "直道半生如汪洋，付一尾孤航。",
     author: "陆上江南",
     profile: "https://github.com/kingstar718",
-    ogImage: "default-og.jpg",
     lang: "zh",
     timezone: "Asia/Shanghai",
     dir: "ltr",
@@ -19,7 +18,6 @@ export default defineAstroPaperConfig({
   },
   features: {
     lightAndDarkMode: true,
-    dynamicOgImage: false,
     showArchives: true,
     showBackButton: true,
     editPost: {

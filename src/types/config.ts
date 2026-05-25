@@ -9,8 +9,6 @@ interface SiteConfig {
   author: string;
   /** Author profile URL (used in structured data) */
   profile?: string;
-  /** Fallback OG image filename in /public, e.g. "og.jpg" */
-  ogImage?: string;
   /** HTML lang attribute, defaults to "en" */
   lang?: string;
   /** IANA timezone for post dates, e.g. "Asia/Bangkok" */
@@ -36,12 +34,6 @@ interface PostsConfig {
 interface FeaturesConfig {
   /** Enable light/dark mode toggle. Defaults to true. */
   lightAndDarkMode?: boolean;
-  /**
-   * Generate dynamic OG images per post and provide `/og.png` when the static
-   * `public/{site.ogImage}` file is absent. When false, that file is required
-   * for the default layout OG image (build fails if missing).
-   */
-  dynamicOgImage?: boolean;
   /** Show the /archives page and link it in nav. Defaults to true. */
   showArchives?: boolean;
   /** Show back button on post detail pages. Defaults to true. */
@@ -94,7 +86,6 @@ type ResolvedSiteConfig = Required<
     | "lang"
     | "timezone"
     | "dir"
-    | "ogImage"
   >
 > &
   Pick<SiteConfig, "profile" | "googleVerification">;
