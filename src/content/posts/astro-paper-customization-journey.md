@@ -77,3 +77,15 @@ description: 持续记录从 AstroPaper 模板出发，将博客一步步打磨�
 About 页面从英文模板介绍重写为简短的个人标识：「陆上江南的博客」。
 
 `examples/` 目录下 4 篇英文示例文章和根级 3 篇模板指导文章（`adding-new-post`、`customizing-astropaper-theme-color-schemes`、`how-to-configure-astropaper-theme`）全部设为草稿（`draft: true`），不再公开显示，但保留原文件以备后续参考。
+
+## 2026-05-25 — 修复本地编译
+
+字体加载在本地编译时失败，因为构建过程无法访问 `fonts.google.com`。问题出在两处：`astro.config.ts` 中的 `fonts` 配置触发构建时下载字体；OG 图片生成依赖构建时下载的字体数据。
+
+**字体改为纯 CDN 加载**：移除 `astro.config.ts` 中的 `fonts` 配置和 `fontProviders` 导入，`Layout.astro` 中用 Google Fonts CDN `<link>` 标签替换 `<Font>` 组件，`Google Sans Code` 与 `Noto Serif SC` 合并为一条请求。这对运行时毫无影响——字体依然从 Google Fonts 加载，只是不再在构建阶段下载。
+
+**关闭动态 OG 图片**：`features.dynamicOgImage` 设为 `false`，使用已有的 `public/default-og.jpg` 作为默认社交图片。删除 `og.png.ts`、`index.png.ts` 路由文件和 `getFontPathByWeight.ts` 工具函数，这几个文件全部依赖构建时字体数据。
+
+**顺手清理**：`Datetime.astro` 中删除未使用的 `useTranslations` 导入和 `t` 变量，编译从 1 hint 变为 0 hints。
+
+最终编译结果：0 errors / 0 warnings / 0 hints，23 个页面正常生成。
