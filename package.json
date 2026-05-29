@@ -19,6 +19,8 @@
     "@astrojs/mdx": "^5.0.6",
     "@astrojs/rss": "^4.0.18",
     "@astrojs/sitemap": "^3.7.2",
+    "@fontsource/noto-sans": "^5.2.10",
+    "@fontsource/noto-serif-sc": "^5.2.9",
     "@tailwindcss/vite": "^4.3.0",
     "astro": "^6.3.3",
     "dayjs": "^1.11.20",

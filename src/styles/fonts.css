@@ -1,17 +1,37 @@
-/* Inter - English/number body text */
+/* Noto Sans - English/number body text */
 @font-face {
-  font-family: "Inter";
+  font-family: "Noto Sans";
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url("/fonts/inter-400.woff2") format("woff2");
+  src: url("../../node_modules/@fontsource/noto-sans/files/noto-sans-latin-400-normal.woff2")
+    format("woff2");
 }
 @font-face {
-  font-family: "Inter";
+  font-family: "Noto Sans";
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url("/fonts/inter-700.woff2") format("woff2");
+  src: url("../../node_modules/@fontsource/noto-sans/files/noto-sans-latin-700-normal.woff2")
+    format("woff2");
+}
+
+/* Noto Serif SC - Chinese body text */
+@font-face {
+  font-family: "Noto Serif SC";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../../node_modules/@fontsource/noto-serif-sc/files/noto-serif-sc-chinese-simplified-400-normal.woff2")
+    format("woff2");
+}
+@font-face {
+  font-family: "Noto Serif SC";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("../../node_modules/@fontsource/noto-serif-sc/files/noto-serif-sc-chinese-simplified-700-normal.woff2")
+    format("woff2");
 }
 
 /* JetBrains Mono - code blocks */

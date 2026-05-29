@@ -121,3 +121,24 @@ About 页面从英文模板介绍重写为简短的个人标识：「陆上江�
 英文和数字继续走本地 `Inter`，中文交给系统字体：macOS 优先 `PingFang SC`，Windows 优先 `Microsoft YaHei`，其他环境回退到 `system-ui`。这样牺牲了一点跨平台字体一致性，但直接减少约 11 MB 的字体传输和仓库体积，对博客场景更划算。
 
 本次构建验证中，`astro check`、`astro build` 和 Pagefind 索引生成均通过；完整 `pnpm run build` 在 Windows 下最后停在原有脚本的 `cp -r dist/pagefind public/`，因为 `cp` 不是 Windows 内置命令，和字体调整无关。
+
+## 2026-05-29 — 改用 Fontsource 托管 Noto 字体
+
+最终还是希望中文保持 `Noto Serif SC` 的阅读气质，英文正文则改为 `Noto Sans`。Astro 的在线字体能力在中国大陆构建时不稳定，所以改用 Fontsource npm 包，把字体作为依赖安装到项目里，由 Vite 在构建时本地处理。
+
+引入的字重为 400 和 700。没有直接使用 Fontsource 自带 CSS，因为它会同时引用 `woff2` 和 `woff`；项目里只保留现代浏览器需要的 `woff2`：
+
+```css
+src: url("../../node_modules/@fontsource/noto-sans/files/noto-sans-latin-400-normal.woff2")
+  format("woff2");
+src: url("../../node_modules/@fontsource/noto-serif-sc/files/noto-serif-sc-chinese-simplified-400-normal.woff2")
+  format("woff2");
+```
+
+字体栈更新为：
+
+```css
+--font-app: "Noto Sans", "Noto Serif SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+```
+
+`Noto Sans` 只加载 Latin 400/700，单个 woff2 约 13 KB；`Noto Serif SC` 使用 Fontsource 的 `chinese-simplified` 400/700，两个 woff2 合计约 3.06 MB。相比最初 10.7 MB 的完整中文字体文件，体积更可控，也不依赖 Google Fonts 的在线访问。
