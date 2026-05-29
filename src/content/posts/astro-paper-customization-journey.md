@@ -1,7 +1,7 @@
 ---
 author: kingstar718
 pubDatetime: 2026-05-25T00:00:00Z
-modDatetime: 2026-05-25T18:30:00Z
+modDatetime: 2026-05-29T18:05:00Z
 title: AstroPaper 博客改造日志
 featured: false
 draft: false
@@ -107,3 +107,17 @@ About 页面从英文模板介绍重写为简短的个人标识：「陆上江�
 ```
 
 中文走思源宋体，英文走 Inter，代码走 JetBrains Mono，各司其职。总字体包 10.7 MB（其中中文 10.7 MB，英文字体不到 70 KB），全部本地托管，零外部请求。
+
+## 2026-05-29 — 移除大体积中文字体
+
+复查字体资源后，发现 `public/fonts/noto-serif-sc.woff2` 单文件约 10.7 MB，已经成为静态资源里最重的一项。为了减小站点体积，移除了本地 Noto Serif SC 文件和对应的 `@font-face` 规则。
+
+正文字体栈改为：
+
+```css
+--font-app: "Inter", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+```
+
+英文和数字继续走本地 `Inter`，中文交给系统字体：macOS 优先 `PingFang SC`，Windows 优先 `Microsoft YaHei`，其他环境回退到 `system-ui`。这样牺牲了一点跨平台字体一致性，但直接减少约 11 MB 的字体传输和仓库体积，对博客场景更划算。
+
+本次构建验证中，`astro check`、`astro build` 和 Pagefind 索引生成均通过；完整 `pnpm run build` 在 Windows 下最后停在原有脚本的 `cp -r dist/pagefind public/`，因为 `cp` 不是 Windows 内置命令，和字体调整无关。
