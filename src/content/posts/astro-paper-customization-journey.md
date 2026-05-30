@@ -1,7 +1,7 @@
 ---
 author: kingstar718
 pubDatetime: 2026-05-25T00:00:00Z
-modDatetime: 2026-05-30T07:45:00Z
+modDatetime: 2026-05-30T07:58:00Z
 title: AstroPaper 博客改造日志
 featured: false
 draft: false
@@ -204,3 +204,15 @@ docs/templates/posts/     # 保留 AstroPaper 模板文章作为参考资料
 最后顺手修了构建脚本。以前 `pnpm build` 会在 Pagefind 索引生成后执行 `cp -r dist/pagefind public/`，把构建产物再写回源码目录。现在搜索索引只保留在 `dist/pagefind/`，部署 `dist/` 即可，不再污染 `public/`。
 
 搜索页开发态提示也改成中文。至此，模板尾巴又少了一截。
+
+## 2026-05-30 — 清理测试内容与历史计划
+
+继续清掉几处不再适合留在正式站点里的内容。
+
+`public/pagefind/` 是旧构建脚本留下的本地搜索索引，现在构建产物只保留在 `dist/pagefind/`，因此直接删除本地残留目录，避免把生成文件误认为源码资产。
+
+`docs/superpowers/` 里保存的是早期字体替换计划，内容还停留在 Noto Sans SC、Inter、Google Sans Code 等旧方案上，和当前系统衬线字体栈已经不一致。为了避免后续误读，删除这两份过期计划文档。
+
+社交图标也继续精简：`linkedin.svg` 和 `x.svg` 已经没有实际配置引用，页脚只保留 GitHub 和邮箱，所以这两个图标文件一并移除。
+
+最后把 Markdown 功能测试文章移出公开内容目录，放到 `docs/testing/markdown-feature-test.md`。它仍然可以作为排版回归测试参考，但不再作为博客文章公开展示。
