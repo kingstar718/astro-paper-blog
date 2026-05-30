@@ -136,104 +136,148 @@ const { Content } = await render(post);
 </PostLayout>
 
 <script is:inline data-astro-rerun>
-  function createProgressBar() {
-    const progressContainer = document.createElement("div");
-    progressContainer.className =
-      "progress-container fixed top-0 z-10 h-1 w-full bg-background";
+  (() => {
+    const progressContainerId = "reading-progress-container";
+    const progressBarId = "reading-progress-bar";
+    const copyButtonLabel = "复制";
+    const copiedButtonLabel = "已复制";
+    const stateKey = "__astroPaperPostPage";
+    const state = window[stateKey] ?? (window[stateKey] = {});
 
-    const progressBar = document.createElement("div");
-    progressBar.className = "progress-bar h-1 w-0 bg-accent";
-    progressBar.id = "myBar";
+    function ensureProgressBar() {
+      for (const staleContainer of document.querySelectorAll(".progress-container")) {
+        if (staleContainer.id !== progressContainerId) {
+          staleContainer.remove();
+        }
+      }
 
-    progressContainer.appendChild(progressBar);
-    document.body.appendChild(progressContainer);
-  }
-  createProgressBar();
+      let progressContainer = document.getElementById(progressContainerId);
+      let progressBar = document.getElementById(progressBarId);
 
-  function updateScrollProgress() {
-    document.addEventListener("scroll", () => {
+      if (!progressContainer || !progressBar) {
+        progressContainer = document.createElement("div");
+        progressContainer.id = progressContainerId;
+        progressContainer.className =
+          "progress-container fixed top-0 z-10 h-1 w-full bg-background";
+
+        progressBar = document.createElement("div");
+        progressBar.id = progressBarId;
+        progressBar.className = "progress-bar h-1 w-0 bg-accent";
+
+        progressContainer.appendChild(progressBar);
+        document.body.appendChild(progressContainer);
+      }
+
+      return progressBar;
+    }
+
+    function updateScrollProgress() {
+      const progressBar = ensureProgressBar();
       const winScroll =
         document.body.scrollTop || document.documentElement.scrollTop;
       const height =
         document.documentElement.scrollHeight -
         document.documentElement.clientHeight;
-      const scrolled = (winScroll / height) * 100;
-      if (document) {
-        const myBar = document.getElementById("myBar");
-        if (myBar) {
-          myBar.style.width = scrolled + "%";
-        }
-      }
-    });
-  }
-  updateScrollProgress();
-
-  function addHeadingLinks() {
-    const headings = Array.from(
-      document.querySelectorAll("h2, h3, h4, h5, h6")
-    );
-    for (const heading of headings) {
-      heading.classList.add("group");
-      const link = document.createElement("a");
-      link.className =
-        "heading-link ms-2 no-underline opacity-75 md:opacity-0 md:group-hover:opacity-100 md:focus:opacity-100";
-      link.href = "#" + heading.id;
-
-      const span = document.createElement("span");
-      span.ariaHidden = "true";
-      span.innerText = "#";
-      link.appendChild(span);
-      heading.appendChild(link);
+      const scrolled = height > 0 ? (winScroll / height) * 100 : 0;
+      progressBar.style.width = `${scrolled}%`;
     }
-  }
-  addHeadingLinks();
 
-  function attachCopyButtons() {
-    const copyButtonLabel = "Copy";
-    const codeBlocks = Array.from(document.querySelectorAll("pre"));
+    function bindScrollProgress() {
+      if (state.scrollHandler) {
+        document.removeEventListener("scroll", state.scrollHandler);
+      }
 
-    for (const codeBlock of codeBlocks) {
-      const wrapper = document.createElement("div");
-      wrapper.style.position = "relative";
+      state.scrollHandler = updateScrollProgress;
+      document.addEventListener("scroll", state.scrollHandler, { passive: true });
+      updateScrollProgress();
+    }
 
-      const computedStyle = getComputedStyle(codeBlock);
-      const hasFileNameOffset =
-        computedStyle.getPropertyValue("--file-name-offset").trim() !== "";
+    function addHeadingLinks() {
+      const headings = document.querySelectorAll("h2, h3, h4, h5, h6");
 
-      const topClass = hasFileNameOffset
-        ? "top-(--file-name-offset)"
-        : "-top-3";
+      for (const heading of headings) {
+        if (!heading.id || heading.querySelector(".heading-link")) {
+          continue;
+        }
 
-      const copyButton = document.createElement("button");
-      copyButton.className = `copy-code absolute end-3 ${topClass} rounded bg-muted border border-muted px-2 py-1 text-xs leading-4 text-foreground font-medium`;
-      copyButton.innerHTML = copyButtonLabel;
-      codeBlock.setAttribute("tabindex", "0");
-      codeBlock.appendChild(copyButton);
+        heading.classList.add("group");
 
-      codeBlock?.parentNode?.insertBefore(wrapper, codeBlock);
-      wrapper.appendChild(codeBlock);
+        const link = document.createElement("a");
+        link.className =
+          "heading-link ms-2 no-underline opacity-75 md:opacity-0 md:group-hover:opacity-100 md:focus:opacity-100";
+        link.href = `#${heading.id}`;
 
-      copyButton.addEventListener("click", async () => {
-        await copyCode(codeBlock, copyButton);
-      });
+        const span = document.createElement("span");
+        span.ariaHidden = "true";
+        span.innerText = "#";
+        link.appendChild(span);
+        heading.appendChild(link);
+      }
     }
 
     async function copyCode(block, button) {
       const code = block.querySelector("code");
-      const text = code?.innerText;
+      const text = code?.innerText ?? "";
 
-      await navigator.clipboard.writeText(text ?? "");
+      await navigator.clipboard.writeText(text);
 
-      button.innerText = "Copied";
-
-      setTimeout(() => {
+      button.innerText = copiedButtonLabel;
+      window.setTimeout(() => {
         button.innerText = copyButtonLabel;
       }, 700);
     }
-  }
-  attachCopyButtons();
 
-  document.addEventListener("astro:after-swap", () =>
-    window.scrollTo({ left: 0, top: 0, behavior: "instant" })
-  );
+    function attachCopyButtons() {
+      const codeBlocks = document.querySelectorAll("pre");
+
+      for (const codeBlock of codeBlocks) {
+        if (codeBlock.querySelector(".copy-code")) {
+          continue;
+        }
+
+        let wrapper = codeBlock.parentElement;
+        if (!wrapper || !wrapper.hasAttribute("data-code-block-wrapper")) {
+          wrapper = document.createElement("div");
+          wrapper.setAttribute("data-code-block-wrapper", "");
+          wrapper.style.position = "relative";
+          codeBlock.parentNode?.insertBefore(wrapper, codeBlock);
+          wrapper.appendChild(codeBlock);
+        }
+
+        const computedStyle = getComputedStyle(codeBlock);
+        const hasFileNameOffset =
+          computedStyle.getPropertyValue("--file-name-offset").trim() !== "";
+        const topClass = hasFileNameOffset ? "top-(--file-name-offset)" : "-top-3";
+
+        const copyButton = document.createElement("button");
+        copyButton.type = "button";
+        copyButton.className = `copy-code absolute end-3 ${topClass} rounded bg-muted border border-muted px-2 py-1 text-xs leading-4 text-foreground font-medium`;
+        copyButton.innerText = copyButtonLabel;
+
+        codeBlock.setAttribute("tabindex", "0");
+        codeBlock.appendChild(copyButton);
+
+        copyButton.addEventListener("click", async () => {
+          await copyCode(codeBlock, copyButton);
+        });
+      }
+    }
+
+    function bindAfterSwapScrollReset() {
+      if (state.afterSwapHandler) {
+        document.removeEventListener("astro:after-swap", state.afterSwapHandler);
+      }
+
+      state.afterSwapHandler = () =>
+        window.scrollTo({ left: 0, top: 0, behavior: "instant" });
+
+      document.addEventListener("astro:after-swap", state.afterSwapHandler);
+    }
+
+    ensureProgressBar();
+    bindScrollProgress();
+    addHeadingLinks();
+    attachCopyButtons();
+    bindAfterSwapScrollReset();
+  })();
 </script>

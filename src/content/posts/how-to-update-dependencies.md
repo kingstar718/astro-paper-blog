@@ -4,7 +4,7 @@ author: Sat Naing
 pubDatetime: 2023-07-20T15:33:05.569Z
 slug: how-to-update-dependencies
 featured: false
-draft: false
+draft: true
 tags:
   - FAQ
 description: How to update project dependencies and AstroPaper template.
