@@ -1,7 +1,7 @@
 ---
 author: kingstar718
 pubDatetime: 2026-05-25T00:00:00Z
-modDatetime: 2026-05-30T07:20:00Z
+modDatetime: 2026-05-30T07:45:00Z
 title: AstroPaper 博客改造日志
 featured: false
 draft: false
@@ -183,3 +183,24 @@ src: url("../../node_modules/@fontsource/noto-serif-sc/files/noto-serif-sc-chine
 - 资源体积更轻，正文不再额外下载中文字体文件
 
 本轮调整后重新执行 `pnpm build`，`astro check`、静态构建和 Pagefind 索引生成均通过；公开页面数量从 23 页收缩到 14 页，搜索索引也随之只保留当前真正对外展示的文章内容。
+
+## 2026-05-30 — 项目说明与内容目录收口
+
+继续把仓库从“套了 AstroPaper 的模板项目”整理成真正属于这个博客的项目。
+
+首先重写了 `README.md`。旧 README 仍然保留大量原模板说明，包括已经删除的默认 OG 图片、动态 OG 功能、原作者联系方式和模板初始化命令。新版本改为说明当前博客的定位、目录结构、常用命令、写作方式和配置入口，并明确部署时发布 `dist/` 目录。
+
+About 页面也从一句占位介绍扩展为真正的个人博客说明：这个站点写什么、为什么保留静态博客形态、以及读者能在这里看到哪些内容。
+
+模板文章则整体移出正式内容目录：
+
+```text
+src/content/posts/        # 只放正式博客文章
+docs/templates/posts/     # 保留 AstroPaper 模板文章作为参考资料
+```
+
+这样 `src/content/posts/` 里只剩公开内容，不再混着一堆草稿模板文件；日后查找、搜索和新增文章都会更清楚。
+
+最后顺手修了构建脚本。以前 `pnpm build` 会在 Pagefind 索引生成后执行 `cp -r dist/pagefind public/`，把构建产物再写回源码目录。现在搜索索引只保留在 `dist/pagefind/`，部署 `dist/` 即可，不再污染 `public/`。
+
+搜索页开发态提示也改成中文。至此，模板尾巴又少了一截。
