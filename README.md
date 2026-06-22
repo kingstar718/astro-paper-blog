@@ -11,8 +11,8 @@
 - 归档页改为紧凑的年/月/日结构
 - Pagefind 静态全文搜索
 - RSS 与 sitemap
-- 本地代码字体 `JetBrains Mono`
-- 系统中文衬线字体栈
+- 本地托管并按 Unicode 范围加载的 Noto 字体
+- 系统中文衬线字体回退
 - 移除分享组件与动态 OG 图片生成
 - 模板文章移入 `docs/templates/posts/` 作为参考资料
 

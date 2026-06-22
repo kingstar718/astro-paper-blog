@@ -7,8 +7,13 @@
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
-  --font-app: "Songti SC", "STSong", "Source Han Serif SC", "Noto Serif CJK SC", "SimSun", serif;
-  --font-code: "JetBrains Mono", ui-monospace, "Cascadia Code", "Source Code Pro", monospace;
+  --font-app:
+    "Noto Serif Variable", "Noto Serif SC Variable", "Songti SC", "STSong",
+    "Source Han Serif SC", "Noto Serif CJK SC", "SimSun", serif;
+  --font-code:
+    "Noto Sans Mono Variable", ui-monospace, "Cascadia Mono", "Cascadia Code",
+    monospace;
+  --font-mono: var(--font-code);
 }
 
 /* Light theme values */

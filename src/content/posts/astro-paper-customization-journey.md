@@ -1,7 +1,7 @@
 ---
 author: kingstar718
 pubDatetime: 2026-05-25T00:00:00Z
-modDatetime: 2026-05-30T07:58:00Z
+modDatetime: 2026-06-22T07:40:00Z
 title: AstroPaper 博客改造日志
 featured: false
 draft: false
@@ -25,22 +25,6 @@ description: 持续记录从 AstroPaper 模板出发，将博客一步步打磨�
 删除了 `_releases`（版本发布记录）和 `_color-schemes`（颜色方案文档）两个目录及其图片资源。额外清理了 about 页面和依赖更新文章中的示例图片引用。
 
 新增了一篇 Markdown 功能测试文章，验证中英文混排效果。`.gitignore` 加入 `.claude` 目录。
-
-## 2026-05-21 — 中文字体
-
-字体的选择和加载折腾了三轮。
-
-**第一轮**：通过 Astro 内置的 `@astrojs/fonts` 加载 Noto Sans SC（思源黑体），设为 `--font-app` 的回退字体。
-
-**第二轮**：发现黑体不适合长篇阅读，换为 Noto Serif SC（思源宋体）。但 CJK 字体文件体积太大（单个字重 5-10 MB），Astro 字体系统在构建时下载超时，只能放弃。
-
-**第三轮**：改为通过 Google Fonts CDN 的 `<link>` 标签直接加载，配合 `preconnect` 优化。加载 400、500、700 三个字重，CSS 中设置为中文回退：
-
-```css
---font-app: var(--font-google-sans-code), "Noto Serif SC", sans-serif;
-```
-
-西文 Google Sans Code，中文思源宋体，各取所需。
 
 ## 2026-05-22 — 首页与归档布局
 
@@ -80,68 +64,11 @@ About 页面从英文模板介绍重写为简短的个人标识：「陆上江�
 
 ## 2026-05-25 — 修复本地编译
 
-字体加载在本地编译时失败，因为构建过程无法访问 `fonts.google.com`。问题出在两处：`astro.config.ts` 中的 `fonts` 配置触发构建时下载字体；OG 图片生成依赖构建时下载的字体数据。
-
-**字体改为纯 CDN 加载**：移除 `astro.config.ts` 中的 `fonts` 配置和 `fontProviders` 导入，`Layout.astro` 中用 Google Fonts CDN `<link>` 标签替换 `<Font>` 组件，`Google Sans Code` 与 `Noto Serif SC` 合并为一条请求。这对运行时毫无影响——字体依然从 Google Fonts 加载，只是不再在构建阶段下载。
-
-**关闭动态 OG 图片**：`features.dynamicOgImage` 设为 `false`，使用已有的 `public/default-og.jpg` 作为默认社交图片。删除 `og.png.ts`、`index.png.ts` 路由文件和 `getFontPathByWeight.ts` 工具函数，这几个文件全部依赖构建时字体数据。
+本地编译一度因为构建阶段需要访问外部资源而失败。为缩短构建链路，关闭了动态 OG 图片：`features.dynamicOgImage` 设为 `false`，改用已有的静态默认图片，并删除相关图片生成路由和工具函数。
 
 **顺手清理**：`Datetime.astro` 中删除未使用的 `useTranslations` 导入和 `t` 变量，编译从 1 hint 变为 0 hints。
 
 最终编译结果：0 errors / 0 warnings / 0 hints，23 个页面正常生成。
-
-## 2026-05-25 — 字体本地化与英文字体补充
-
-彻底告别 Google Fonts CDN，全部字体回归本地文件。同时补上了之前缺失的英文正文字体和代码字体。
-
-**删除 CDN 依赖**：`Layout.astro` 中移除 Google Fonts `<link>` 标签和 `preconnect`，`fonts.css` 精简为纯 `@font-face` 规则。不再依赖任何外部字体服务。
-
-**新增英文字体 Inter**：正文用 `Inter`（400 + 700 两个字重），从 jsDelivr CDN 下载 woff2 放到 `public/fonts/`。Inter 是为屏幕阅读设计的无衬线字体，x-height 高、辨识度好，搭配中文宋体也不违和。单字重仅 24 KB。
-
-**新增代码字体 JetBrains Mono**：原计划用 Google Sans Code，但在 jsDelivr 上不可用（该字体未公开发布 woff2），改用 JetBrains Mono。程序员最熟悉的等宽字体之一，连字支持和字符区分度都很好，单字重 21 KB。
-
-**字体栈最终形态**：
-```css
---font-app: "Noto Serif SC", "Inter", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
---font-code: "JetBrains Mono", ui-monospace, "Cascadia Code", "Source Code Pro", monospace;
-```
-
-中文走思源宋体，英文走 Inter，代码走 JetBrains Mono，各司其职。总字体包 10.7 MB（其中中文 10.7 MB，英文字体不到 70 KB），全部本地托管，零外部请求。
-
-## 2026-05-29 — 移除大体积中文字体
-
-复查字体资源后，发现 `public/fonts/noto-serif-sc.woff2` 单文件约 10.7 MB，已经成为静态资源里最重的一项。为了减小站点体积，移除了本地 Noto Serif SC 文件和对应的 `@font-face` 规则。
-
-正文字体栈改为：
-
-```css
---font-app: "Inter", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
-```
-
-英文和数字继续走本地 `Inter`，中文交给系统字体：macOS 优先 `PingFang SC`，Windows 优先 `Microsoft YaHei`，其他环境回退到 `system-ui`。这样牺牲了一点跨平台字体一致性，但直接减少约 11 MB 的字体传输和仓库体积，对博客场景更划算。
-
-本次构建验证中，`astro check`、`astro build` 和 Pagefind 索引生成均通过；完整 `pnpm run build` 在 Windows 下最后停在原有脚本的 `cp -r dist/pagefind public/`，因为 `cp` 不是 Windows 内置命令，和字体调整无关。
-
-## 2026-05-29 — 改用 Fontsource 托管 Noto 字体
-
-最终还是希望中文保持 `Noto Serif SC` 的阅读气质，英文正文则改为 `Noto Sans`。Astro 的在线字体能力在中国大陆构建时不稳定，所以改用 Fontsource npm 包，把字体作为依赖安装到项目里，由 Vite 在构建时本地处理。
-
-引入的字重为 400 和 700。没有直接使用 Fontsource 自带 CSS，因为它会同时引用 `woff2` 和 `woff`；项目里只保留现代浏览器需要的 `woff2`：
-
-```css
-src: url("../../node_modules/@fontsource/noto-sans/files/noto-sans-latin-400-normal.woff2")
-  format("woff2");
-src: url("../../node_modules/@fontsource/noto-serif-sc/files/noto-serif-sc-chinese-simplified-400-normal.woff2")
-  format("woff2");
-```
-
-字体栈更新为：
-
-```css
---font-app: "Noto Sans", "Noto Serif SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
-```
-
-`Noto Sans` 只加载 Latin 400/700，单个 woff2 约 13 KB；`Noto Serif SC` 使用 Fontsource 的 `chinese-simplified` 400/700，两个 woff2 合计约 3.06 MB。相比最初 10.7 MB 的完整中文字体文件，体积更可控，也不依赖 Google Fonts 的在线访问。
 
 ## 2026-05-30 — 文章页脚本幂等化
 
@@ -158,29 +85,13 @@ src: url("../../node_modules/@fontsource/noto-serif-sc/files/noto-serif-sc-chine
 
 本地预览里来回切换文章页后复查，进度条、标题锚点和复制按钮数量都保持不变，说明这部分脚本已经稳定下来。
 
-## 2026-05-30 — 模板文章下线与字体方案收口
+## 2026-05-30 — 模板文章下线
 
 又做了一轮“减法”，主要目的是让公开内容和实际站点风格更一致。
 
 先把还在公开状态的 5 篇 AstroPaper 模板文章全部改为草稿：动态 OG、依赖更新、Git Hooks 日期、Giscus 评论、LaTeX 公式。它们仍然保留在仓库里，后面需要参考时随时可翻，但不再出现在首页、文章列表、归档、RSS 和搜索结果中。
 
 这样处理后，首页公开文章只剩真正属于当前博客的内容，站点气质会更统一，不会再混入一批模板作者的英文教程。
-
-字体方面也做了收口。上一版尝试通过 Fontsource 直接引用 `node_modules` 下的 woff2 文件，虽然源码层面看似可行，但复查构建产物后发现这种写法不够稳，继续保留只会让后续维护成本变高。
-
-最后回到更朴素也更可靠的方案：
-
-```css
---font-app: "Songti SC", "STSong", "Source Han Serif SC", "Noto Serif CJK SC", "SimSun", serif;
-```
-
-也就是正文直接使用系统自带的中文衬线字体栈；代码字体继续保留本地 `JetBrains Mono`。同时移除了 `@fontsource/noto-sans` 和 `@fontsource/noto-serif-sc` 依赖，`fonts.css` 只保留代码字体的 `@font-face`。
-
-这样做虽然不再追求所有平台上一模一样的中文字形，但换来了三个好处：
-
-- 构建链路更短，不再依赖字体包内部路径
-- 运行时更稳，不会出现“源码声明了字体，产物里却没有真正打包”的不确定性
-- 资源体积更轻，正文不再额外下载中文字体文件
 
 本轮调整后重新执行 `pnpm build`，`astro check`、静态构建和 Pagefind 索引生成均通过；公开页面数量从 23 页收缩到 14 页，搜索索引也随之只保留当前真正对外展示的文章内容。
 
@@ -211,8 +122,115 @@ docs/templates/posts/     # 保留 AstroPaper 模板文章作为参考资料
 
 `public/pagefind/` 是旧构建脚本留下的本地搜索索引，现在构建产物只保留在 `dist/pagefind/`，因此直接删除本地残留目录，避免把生成文件误认为源码资产。
 
-`docs/superpowers/` 里保存的是早期字体替换计划，内容还停留在 Noto Sans SC、Inter、Google Sans Code 等旧方案上，和当前系统衬线字体栈已经不一致。为了避免后续误读，删除这两份过期计划文档。
+`docs/superpowers/` 里保存的是已经失效的早期改造计划。为了避免后续误读，删除了这些过期文档。
 
 社交图标也继续精简：`linkedin.svg` 和 `x.svg` 已经没有实际配置引用，页脚只保留 GitHub 和邮箱，所以这两个图标文件一并移除。
 
 最后把 Markdown 功能测试文章移出公开内容目录，放到 `docs/testing/markdown-feature-test.md`。它仍然可以作为排版回归测试参考，但不再作为博客文章公开展示。
+
+## 字体系统演进
+
+字体是这个博客改动次数最多的一部分。目标一直没有变：中文适合长篇阅读，英文和代码清晰，同时保证国内访问稳定、构建过程可靠、字体体积可控。
+
+### 2026-05-21 — 从在线字体开始
+
+最初通过 Astro 的字体能力加载 Noto Sans SC，随后因为更偏好中文衬线字体的阅读感，换成 Noto Serif SC。CJK 字库体积很大，构建阶段下载经常超时，因此又改为通过 Google Fonts CDN 加载。
+
+这一阶段使用过 Google Sans Code 和 Noto Serif SC 的组合，但很快发现它存在两个问题：
+
+- 国内网络访问 Google Fonts 不稳定
+- 构建和运行依赖外部字体服务
+
+### 2026-05-25 — 字体本地化
+
+为了去掉外部依赖，字体开始转为本地托管。英文正文使用 Inter，代码使用 JetBrains Mono，中文使用本地 Noto Serif SC。
+
+当时的字体栈是：
+
+```css
+--font-app:
+  "Noto Serif SC",
+  "Inter",
+  "PingFang SC",
+  "Microsoft YaHei",
+  system-ui,
+  sans-serif;
+
+--font-code:
+  "JetBrains Mono",
+  ui-monospace,
+  "Cascadia Code",
+  "Source Code Pro",
+  monospace;
+```
+
+这套方案解决了网络依赖，但完整的 Noto Serif SC 文件约 10.7 MB，成为站点最重的静态资源。
+
+### 2026-05-29 — 在体积和一致性之间反复取舍
+
+为了降低传输体积，一度移除本地中文字体，让不同平台分别回退到 `PingFang SC`、`Microsoft YaHei` 和 `system-ui`。这种方式最轻，但不同系统上的中文观感差异较大，也失去了想要的宋体阅读风格。
+
+之后尝试通过 Fontsource 引入 Noto Sans 和 Noto Serif SC，只保留现代浏览器需要的 WOFF2。中文字体体积降到约 3.06 MB，但直接引用 `node_modules` 内部字体路径不够稳，构建产物也不容易验证。
+
+### 2026-05-30 — 暂时回到系统字体
+
+为了先保证构建链路简单可靠，中文正文暂时改回系统衬线字体栈：
+
+```css
+--font-app:
+  "Songti SC",
+  "STSong",
+  "Source Han Serif SC",
+  "Noto Serif CJK SC",
+  "SimSun",
+  serif;
+```
+
+代码字体继续使用本地 JetBrains Mono。这个阶段不再追求各平台字形完全一致，优先保证零外部请求和较小的资源体积。
+
+### 2026-06-22 — Noto 全家族与中文分包
+
+最终方案统一使用 Noto 字体家族：
+
+- 英文正文使用 `Noto Serif`
+- 简体中文使用 `Noto Serif SC`
+- 行内代码、代码块和等宽数字使用 `Noto Sans Mono`
+
+三套字体全部托管在站点自身的 `public/fonts/` 目录，不请求 Google Fonts 或其他境外字体 CDN。
+
+中文字体采用 `unicode-range` 分包，将 Noto Serif SC 拆成 101 个 WOFF2 文件。浏览器会根据当前页面出现的字符，只下载对应分片，而不是一次加载完整字库。
+
+字体资源整体情况如下：
+
+```text
+Noto Serif       2 个拉丁字符分片    约 0.21 MB
+Noto Serif SC    101 个中文分片      完整约 5.75 MB
+Noto Sans Mono   2 个拉丁字符分片    约 0.18 MB
+```
+
+这里的 5.75 MB 是服务器保存的完整中文字库总量，不是单个页面的下载量。已加载的分片可以被浏览器长期缓存，访问其他文章时只补充尚未缓存的字符分片。
+
+最终字体变量为：
+
+```css
+--font-app:
+  "Noto Serif Variable",
+  "Noto Serif SC Variable",
+  "Songti SC",
+  "STSong",
+  "Source Han Serif SC",
+  "Noto Serif CJK SC",
+  "SimSun",
+  serif;
+
+--font-code:
+  "Noto Sans Mono Variable",
+  ui-monospace,
+  "Cascadia Mono",
+  "Cascadia Code",
+  monospace;
+```
+
+原来的 JetBrains Mono 文件和声明已经移除。Tailwind 的 `font-mono` 也指向 `--font-code`，归档日期等界面元素会和代码区域使用同一套等宽字体。
+
+字体 CSS 最初通过全局样式中的 `@import` 加载，但经过 Tailwind 和 PostCSS 展开后触发了 `@import must precede all other statements` 警告。最终改为在 `Layout.astro` 的 `<head>` 中加载三份同源字体样式表，并通过 `getAssetPath()` 生成路径，以兼容子目录部署。
