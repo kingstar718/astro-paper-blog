@@ -15,11 +15,16 @@ export default {
     editPage: "编辑页面",
     previousPost: "上一篇",
     nextPost: "下一篇",
+    copy: "复制",
+    copied: "已复制",
   },
   pagination: {
     prev: "上一页",
     next: "下一页",
     page: "第",
+  },
+  home: {
+    allPosts: "全部文章",
   },
   footer: {
     copyright: "Copyright",

@@ -1,3 +1,5 @@
+// 这里只放"站点级"设置。主题色、字体、代码高亮、文案等在别处，
+// 不确定改哪个文件时看 docs/config-map.md。
 import { defineAstroPaperConfig } from "./src/types/config";
 
 export default defineAstroPaperConfig({

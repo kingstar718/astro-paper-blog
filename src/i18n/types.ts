@@ -13,11 +13,16 @@ export interface UIStrings {
     editPage: string;
     previousPost: string;
     nextPost: string;
+    copy: string;
+    copied: string;
   };
   pagination: {
     prev: string;
     next: string;
     page: string;
+  };
+  home: {
+    allPosts: string;
   };
   footer: {
     copyright: string;

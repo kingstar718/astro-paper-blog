@@ -12,7 +12,10 @@ import EditPost from "./_components/EditPost.astro";
 import BackButton from "./_components/BackButton.astro";
 import BackToTopButton from "./_components/BackToTopButton.astro";
 import AdjacentPostNav from "./_components/AdjacentPostNav.astro";
+import { useTranslations } from "@/i18n";
 import config from "@/config";
+
+const t = useTranslations(Astro.currentLocale);
 
 export async function getStaticPaths() {
   const posts = await getCollection("posts");
@@ -85,6 +88,8 @@ const { Content } = await render(post);
     id="main-content"
     class:list={["app-layout", { "mt-8": !config.features.showBackButton }]}
     data-pagefind-body
+    data-copy-label={t.post.copy}
+    data-copied-label={t.post.copied}
   >
     <h1
       style={{ viewTransitionName: slugifyStr(title.replaceAll(".", "-")) }}
@@ -139,8 +144,9 @@ const { Content } = await render(post);
   (() => {
     const progressContainerId = "reading-progress-container";
     const progressBarId = "reading-progress-bar";
-    const copyButtonLabel = "复制";
-    const copiedButtonLabel = "已复制";
+    const mainContent = document.getElementById("main-content");
+    const copyButtonLabel = mainContent?.dataset.copyLabel ?? "Copy";
+    const copiedButtonLabel = mainContent?.dataset.copiedLabel ?? "Copied";
     const stateKey = "__astroPaperPostPage";
     const state = window[stateKey] ?? (window[stateKey] = {});
 

@@ -16,6 +16,7 @@
   --font-mono: var(--font-code);
 }
 
+/* 页面主色板。代码块（shiki）配色在 astro.config.ts 的 shikiConfig。 */
 /* Light theme values */
 :root,
 [data-theme="light"] {

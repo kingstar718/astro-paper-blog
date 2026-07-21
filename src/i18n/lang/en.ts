@@ -15,11 +15,16 @@ export default {
     editPage: "Edit page",
     previousPost: "Previous Post",
     nextPost: "Next Post",
+    copy: "Copy",
+    copied: "Copied",
   },
   pagination: {
     prev: "Prev",
     next: "Next",
     page: "Page",
+  },
+  home: {
+    allPosts: "All Posts",
   },
   footer: {
     copyright: "Copyright",
