@@ -4,9 +4,9 @@ export default {
   nav: {
     home: "Home",
     posts: "Posts",
+    notes: "Notes",
     tags: "Tags",
     about: "About",
-    archives: "Archives",
     search: "Search",
   },
   post: {
@@ -24,9 +24,6 @@ export default {
     next: "Next",
     page: "Page",
   },
-  home: {
-    allPosts: "All Posts",
-  },
   footer: {
     copyright: "Copyright",
     allRightsReserved: "All rights reserved.",
@@ -36,16 +33,13 @@ export default {
     tagDesc: "All the articles with the tag",
 
     tagsTitle: "Tags",
-    tagsDesc: "All the tags used in posts.",
 
     postsTitle: "Posts",
-    postsDesc: "All the articles I've posted.",
+    postsUnit: "posts",
 
-    archivesTitle: "Archives",
-    archivesDesc: "All the articles I've archived.",
+    notesTitle: "Notes",
 
     searchTitle: "Search",
-    searchDesc: "Search any article ...",
   },
   a11y: {
     skipToContent: "Skip to content",

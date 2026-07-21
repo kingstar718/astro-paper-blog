@@ -31,4 +31,16 @@ const pages = defineCollection({
   }),
 });
 
-export const collections = { posts, pages };
+// 短文：标题可选、正文一两段，直接在列表里展开，不单独生成详情页
+const notes = defineCollection({
+  loader: glob({ pattern: "**/[^_]*.{md,mdx}", base: "./src/content/notes" }),
+  schema: z.object({
+    title: z.string().optional(),
+    pubDatetime: z.date(),
+    modDatetime: z.date().optional().nullable(),
+    draft: z.boolean().optional(),
+    timezone: z.string().optional(),
+  }),
+});
+
+export const collections = { posts, pages, notes };

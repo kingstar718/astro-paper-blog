@@ -1,23 +1,57 @@
 ---
-import { getCollection } from "astro:content";
+import { getCollection, render } from "astro:content";
 import { getRelativeLocaleUrl } from "astro:i18n";
-import IconArrowRight from "@/assets/icons/IconArrowRight.svg";
 import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import Card from "@/components/Card.astro";
-import LinkButton from "@/components/LinkButton.astro";
+import Datetime from "@/components/Datetime.astro";
 import { getSortedPosts } from "@/utils/getSortedPosts";
-import { useTranslations } from "@/i18n";
 import config from "@/config";
 
 const locale = Astro.currentLocale ?? config.site.lang;
-const t = useTranslations(locale);
-
-const posts = await getCollection("posts", ({ data }) => !data.draft);
-const sortedPosts = getSortedPosts(posts).slice(0, config.posts.perIndex);
-
 const homePath = getRelativeLocaleUrl(locale, "");
+
+// 首页文章、短文各取最近 perIndex 条，再合并按时间倒序
+const limit = config.posts.perIndex;
+
+const posts = getSortedPosts(await getCollection("posts")).slice(0, limit);
+
+const now = Date.now();
+const noteEntries = (await getCollection("notes", ({ data }) => !data.draft))
+  .filter(n => n.data.pubDatetime.getTime() <= now)
+  .sort((a, b) => b.data.pubDatetime.getTime() - a.data.pubDatetime.getTime())
+  .slice(0, limit);
+const renderedNotes = await Promise.all(
+  noteEntries.map(async note => ({
+    note,
+    Content: (await render(note)).Content,
+  }))
+);
+
+// 文章 + 短文混排，按发布时间倒序
+type TimelineItem =
+  | { kind: "post"; date: Date; post: (typeof posts)[number] }
+  | {
+      kind: "note";
+      date: Date;
+      note: (typeof renderedNotes)[number]["note"];
+      Content: (typeof renderedNotes)[number]["Content"];
+    };
+
+const items: TimelineItem[] = [
+  ...posts.map(post => ({
+    kind: "post" as const,
+    date: post.data.pubDatetime,
+    post,
+  })),
+  ...renderedNotes.map(({ note, Content }) => ({
+    kind: "note" as const,
+    date: note.data.pubDatetime,
+    note,
+    Content,
+  })),
+].sort((a, b) => b.date.getTime() - a.date.getTime());
 ---
 
 <Layout>
@@ -28,29 +62,52 @@ const homePath = getRelativeLocaleUrl(locale, "");
     data-home-path={homePath}
     class="app-layout"
   >
-    <section id="posts" class="pt-12 pb-6">
+    <section class="pt-8 pb-6">
       <ul>
-        {sortedPosts.map(post => <Card {...post} />)}
+        {
+          items.map(item => {
+            if (item.kind === "post") {
+              return <Card {...item.post} />;
+            }
+            const { Content } = item;
+            return (
+              <li class="border-border my-4 border-s-2 ps-4">
+                <div class="flex items-baseline justify-between gap-4">
+                  {item.note.data.title ? (
+                    <h2 class="text-accent text-lg font-semibold">
+                      {item.note.data.title}
+                    </h2>
+                  ) : (
+                    <span />
+                  )}
+                  <Datetime
+                    pubDatetime={item.note.data.pubDatetime}
+                    modDatetime={item.note.data.modDatetime}
+                    timezone={item.note.data.timezone}
+                    icon={false}
+                    class="shrink-0"
+                  />
+                </div>
+                <div class="app-prose mt-1 max-w-none">
+                  <Content />
+                </div>
+              </li>
+            );
+          })
+        }
       </ul>
     </section>
-
-    <div class="my-8 text-center">
-      <LinkButton href={getRelativeLocaleUrl(locale, "posts")}>
-        {t.home.allPosts}
-        <IconArrowRight class="inline-block rtl:-rotate-180" />
-      </LinkButton>
-    </div>
   </main>
   <Footer />
 </Layout>
 
 <script>
   document.addEventListener("astro:page-load", () => {
-    const indexLayout = (document.querySelector("#main-content") as HTMLElement)
-      ?.dataset;
+    // 记录首页地址，供文章页“返回”按钮使用
+    const main = document.querySelector("#main-content") as HTMLElement | null;
     const baseRoot = import.meta.env.BASE_URL.replace(/\/?$/, "/");
-    if (indexLayout?.layout) {
-      sessionStorage.setItem("backUrl", indexLayout.homePath ?? baseRoot);
+    if (main?.dataset.layout) {
+      sessionStorage.setItem("backUrl", main.dataset.homePath ?? baseRoot);
     }
   });
 </script>

@@ -2,9 +2,9 @@ export interface UIStrings {
   nav: {
     home: string;
     posts: string;
+    notes: string;
     tags: string;
     about: string;
-    archives: string;
     search: string;
   };
   post: {
@@ -22,9 +22,6 @@ export interface UIStrings {
     next: string;
     page: string;
   };
-  home: {
-    allPosts: string;
-  };
   footer: {
     copyright: string;
     allRightsReserved: string;
@@ -34,16 +31,13 @@ export interface UIStrings {
     tagDesc: string;
 
     tagsTitle: string;
-    tagsDesc: string;
 
     postsTitle: string;
-    postsDesc: string;
+    postsUnit: string;
 
-    archivesTitle: string;
-    archivesDesc: string;
+    notesTitle: string;
 
     searchTitle: string;
-    searchDesc: string;
   };
   a11y: {
     skipToContent: string;

@@ -1,0 +1,60 @@
+---
+import { getCollection, render } from "astro:content";
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Main from "@/components/Main.astro";
+import Footer from "@/components/Footer.astro";
+import Datetime from "@/components/Datetime.astro";
+import { useTranslations } from "@/i18n";
+import config from "@/config";
+
+const locale = Astro.currentLocale ?? config.site.lang;
+const t = useTranslations(locale);
+
+const now = Date.now();
+const noteEntries = (await getCollection("notes", ({ data }) => !data.draft))
+  .filter(n => n.data.pubDatetime.getTime() <= now)
+  .sort((a, b) => b.data.pubDatetime.getTime() - a.data.pubDatetime.getTime());
+const renderedNotes = await Promise.all(
+  noteEntries.map(async note => ({
+    note,
+    Content: (await render(note)).Content,
+  }))
+);
+---
+
+<Layout title={`${t.pages.notesTitle} | ${config.site.title}`}>
+  <Header />
+
+  <Main class="pt-8">
+    <ul>
+      {
+        renderedNotes.map(({ note, Content }) => (
+          <li class="border-border my-4 border-s-2 ps-4">
+            <div class="flex items-baseline justify-between gap-4">
+              {note.data.title ? (
+                <h2 class="text-accent text-lg font-semibold">
+                  {note.data.title}
+                </h2>
+              ) : (
+                <span />
+              )}
+              <Datetime
+                pubDatetime={note.data.pubDatetime}
+                modDatetime={note.data.modDatetime}
+                timezone={note.data.timezone}
+                icon={false}
+                class="shrink-0"
+              />
+            </div>
+            <div class="app-prose mt-1 max-w-none">
+              <Content />
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </Main>
+
+  <Footer />
+</Layout>

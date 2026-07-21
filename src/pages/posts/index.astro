@@ -1,0 +1,84 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Main from "@/components/Main.astro";
+import Footer from "@/components/Footer.astro";
+import { postFilter } from "@/utils/postFilter";
+import { getPostsByGroupCondition } from "@/utils/getPostsByGroupCondition";
+import { getPostUrl } from "@/utils/getPostPaths";
+import { useTranslations } from "@/i18n";
+import config from "@/config";
+
+const locale = Astro.currentLocale ?? config.site.lang;
+const t = useTranslations(locale);
+
+const posts = (await getCollection("posts")).filter(postFilter);
+
+// 按年份分组，年内按发布时间倒序
+const years = Object.entries(
+  getPostsByGroupCondition(posts, post => post.data.pubDatetime.getFullYear())
+).sort(([a], [b]) => Number(b) - Number(a));
+
+const monthDay = (d: Date) =>
+  `${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+---
+
+<Layout title={`${t.pages.postsTitle} | ${config.site.title}`}>
+  <Header />
+
+  <Main class="pt-8">
+    {
+      years.map(([year, yearPosts]) => (
+        <section class="mb-10">
+          <div class="mb-5 flex items-baseline gap-4">
+            <span class="text-2xl leading-none font-semibold">{year}</span>
+            <span class="text-muted-foreground text-sm">
+              {yearPosts.length} {t.pages.postsUnit}
+            </span>
+            <div class="bg-border h-px flex-1" />
+          </div>
+
+          <ul class="border-border/40 space-y-1 border-s ps-6">
+            {yearPosts
+              .sort(
+                (a, b) =>
+                  b.data.pubDatetime.getTime() - a.data.pubDatetime.getTime()
+              )
+              .map(post => (
+                <li>
+                  <a
+                    href={getPostUrl(
+                      post.id,
+                      post.filePath,
+                      Astro.currentLocale
+                    )}
+                    class="group hover:bg-muted/50 -ms-3 flex items-baseline gap-4 rounded-lg px-3 py-1.5 transition-colors"
+                  >
+                    <time class="text-muted-foreground w-14 shrink-0 font-mono text-sm">
+                      {monthDay(post.data.pubDatetime)}
+                    </time>
+                    <span class="group-hover:text-accent leading-relaxed transition-colors">
+                      {post.data.featured && (
+                        <svg
+                          class="text-accent me-1 inline size-3.5 align-[-0.15em]"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                          aria-hidden="true"
+                        >
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                      )}
+                      {post.data.title}
+                    </span>
+                  </a>
+                </li>
+              ))}
+          </ul>
+        </section>
+      ))
+    }
+  </Main>
+
+  <Footer />
+</Layout>

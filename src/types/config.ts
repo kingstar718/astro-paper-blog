@@ -34,8 +34,6 @@ interface PostsConfig {
 interface FeaturesConfig {
   /** Enable light/dark mode toggle. Defaults to true. */
   lightAndDarkMode?: boolean;
-  /** Show the /archives page and link it in nav. Defaults to true. */
-  showArchives?: boolean;
   /** Show back button on post detail pages. Defaults to true. */
   showBackButton?: boolean;
   /** "Edit page" link shown on post detail pages. */
