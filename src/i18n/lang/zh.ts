@@ -10,9 +10,6 @@ export default {
     search: "搜索",
   },
   post: {
-    publishedAt: "发布于",
-    updatedAt: "更新于",
-    tagLabel: "标签",
     backToTop: "回到顶部",
     goBack: "返回",
     editPage: "编辑页面",
@@ -23,12 +20,6 @@ export default {
     prev: "上一页",
     next: "下一页",
     page: "第",
-  },
-  home: {
-    socialLinks: "社交链接",
-    featured: "精选",
-    recentPosts: "最近文章",
-    allPosts: "全部文章",
   },
   footer: {
     copyright: "Copyright",
@@ -55,8 +46,6 @@ export default {
     openMenu: "打开菜单",
     closeMenu: "关闭菜单",
     toggleTheme: "切换主题",
-    searchPlaceholder: "搜索文章...",
-    noResults: "未找到结果",
     goToPreviousPage: "转到上一页",
     goToNextPage: "转到下一页",
   },

@@ -8,18 +8,18 @@ export const BLOG_PATH = "src/content/posts";
 const posts = defineCollection({
   loader: glob({ pattern: "**/[^_]*.{md,mdx}", base: `./${BLOG_PATH}` }),
   schema: z.object({
-      author: z.string().default(config.site.author),
-      pubDatetime: z.date(),
-      modDatetime: z.date().optional().nullable(),
-      title: z.string(),
-      featured: z.boolean().optional(),
-      draft: z.boolean().optional(),
-      tags: z.array(z.string()).default(["others"]),
-      description: z.string(),
-      canonicalURL: z.string().optional(),
-      hideEditPost: z.boolean().optional(),
-      timezone: z.string().optional(),
-    }),
+    author: z.string().default(config.site.author),
+    pubDatetime: z.date(),
+    modDatetime: z.date().optional().nullable(),
+    title: z.string(),
+    featured: z.boolean().optional(),
+    draft: z.boolean().optional(),
+    tags: z.array(z.string()).default(["others"]),
+    description: z.string(),
+    canonicalURL: z.string().optional(),
+    hideEditPost: z.boolean().optional(),
+    timezone: z.string().optional(),
+  }),
 });
 
 const pages = defineCollection({

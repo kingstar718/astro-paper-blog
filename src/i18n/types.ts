@@ -8,9 +8,6 @@ export interface UIStrings {
     search: string;
   };
   post: {
-    publishedAt: string;
-    updatedAt: string;
-    tagLabel: string;
     backToTop: string;
     goBack: string;
     editPage: string;
@@ -21,12 +18,6 @@ export interface UIStrings {
     prev: string;
     next: string;
     page: string;
-  };
-  home: {
-    socialLinks: string;
-    featured: string;
-    recentPosts: string;
-    allPosts: string;
   };
   footer: {
     copyright: string;
@@ -53,8 +44,6 @@ export interface UIStrings {
     openMenu: string;
     closeMenu: string;
     toggleTheme: string;
-    searchPlaceholder: string;
-    noResults: string;
     goToPreviousPage: string;
     goToNextPage: string;
   };

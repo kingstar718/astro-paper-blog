@@ -149,19 +149,11 @@ docs/templates/posts/     # 保留 AstroPaper 模板文章作为参考资料
 
 ```css
 --font-app:
-  "Noto Serif SC",
-  "Inter",
-  "PingFang SC",
-  "Microsoft YaHei",
-  system-ui,
+  "Noto Serif SC", "Inter", "PingFang SC", "Microsoft YaHei", system-ui,
   sans-serif;
 
 --font-code:
-  "JetBrains Mono",
-  ui-monospace,
-  "Cascadia Code",
-  "Source Code Pro",
-  monospace;
+  "JetBrains Mono", ui-monospace, "Cascadia Code", "Source Code Pro", monospace;
 ```
 
 这套方案解决了网络依赖，但完整的 Noto Serif SC 文件约 10.7 MB，成为站点最重的静态资源。
@@ -178,11 +170,7 @@ docs/templates/posts/     # 保留 AstroPaper 模板文章作为参考资料
 
 ```css
 --font-app:
-  "Songti SC",
-  "STSong",
-  "Source Han Serif SC",
-  "Noto Serif CJK SC",
-  "SimSun",
+  "Songti SC", "STSong", "Source Han Serif SC", "Noto Serif CJK SC", "SimSun",
   serif;
 ```
 
@@ -214,20 +202,11 @@ Noto Sans Mono   2 个拉丁字符分片    约 0.18 MB
 
 ```css
 --font-app:
-  "Noto Serif Variable",
-  "Noto Serif SC Variable",
-  "Songti SC",
-  "STSong",
-  "Source Han Serif SC",
-  "Noto Serif CJK SC",
-  "SimSun",
-  serif;
+  "Noto Serif Variable", "Noto Serif SC Variable", "Songti SC", "STSong",
+  "Source Han Serif SC", "Noto Serif CJK SC", "SimSun", serif;
 
 --font-code:
-  "Noto Sans Mono Variable",
-  ui-monospace,
-  "Cascadia Mono",
-  "Cascadia Code",
+  "Noto Sans Mono Variable", ui-monospace, "Cascadia Mono", "Cascadia Code",
   monospace;
 ```
 

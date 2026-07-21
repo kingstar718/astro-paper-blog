@@ -145,7 +145,9 @@ const { Content } = await render(post);
     const state = window[stateKey] ?? (window[stateKey] = {});
 
     function ensureProgressBar() {
-      for (const staleContainer of document.querySelectorAll(".progress-container")) {
+      for (const staleContainer of document.querySelectorAll(
+        ".progress-container"
+      )) {
         if (staleContainer.id !== progressContainerId) {
           staleContainer.remove();
         }
@@ -188,7 +190,9 @@ const { Content } = await render(post);
       }
 
       state.scrollHandler = updateScrollProgress;
-      document.addEventListener("scroll", state.scrollHandler, { passive: true });
+      document.addEventListener("scroll", state.scrollHandler, {
+        passive: true,
+      });
       updateScrollProgress();
     }
 
@@ -247,7 +251,9 @@ const { Content } = await render(post);
         const computedStyle = getComputedStyle(codeBlock);
         const hasFileNameOffset =
           computedStyle.getPropertyValue("--file-name-offset").trim() !== "";
-        const topClass = hasFileNameOffset ? "top-(--file-name-offset)" : "-top-3";
+        const topClass = hasFileNameOffset
+          ? "top-(--file-name-offset)"
+          : "-top-3";
 
         const copyButton = document.createElement("button");
         copyButton.type = "button";
@@ -265,7 +271,10 @@ const { Content } = await render(post);
 
     function bindAfterSwapScrollReset() {
       if (state.afterSwapHandler) {
-        document.removeEventListener("astro:after-swap", state.afterSwapHandler);
+        document.removeEventListener(
+          "astro:after-swap",
+          state.afterSwapHandler
+        );
       }
 
       state.afterSwapHandler = () =>

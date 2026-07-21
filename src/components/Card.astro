@@ -18,7 +18,8 @@ const url = getPostUrl(id, filePath, Astro.currentLocale);
   variantType === "compact" ? (
     <li class="my-1">
       <span class="text-muted-foreground inline-block w-16 font-mono text-sm">
-        {String(data.pubDatetime.getMonth() + 1).padStart(2, "0")}-{String(data.pubDatetime.getDate()).padStart(2, "0")}
+        {String(data.pubDatetime.getMonth() + 1).padStart(2, "0")}-
+        {String(data.pubDatetime.getDate()).padStart(2, "0")}
       </span>
       <a
         href={url}
@@ -37,17 +38,15 @@ const url = getPostUrl(id, filePath, Astro.currentLocale);
           "focus-visible:no-underline focus-visible:underline-offset-0",
         ]}
       >
-        {
-          variantType === "h3" ? (
-            <h3 transition:name={slugifyStr(title.replaceAll(".", "-"))}>
-              {title}
-            </h3>
-          ) : (
-            <h2 transition:name={slugifyStr(title.replaceAll(".", "-"))}>
-              {title}
-            </h2>
-          )
-        }
+        {variantType === "h3" ? (
+          <h3 transition:name={slugifyStr(title.replaceAll(".", "-"))}>
+            {title}
+          </h3>
+        ) : (
+          <h2 transition:name={slugifyStr(title.replaceAll(".", "-"))}>
+            {title}
+          </h2>
+        )}
       </a>
       <Datetime {...props} />
       <p>{description}</p>

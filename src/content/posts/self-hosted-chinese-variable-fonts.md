@@ -18,12 +18,12 @@ description: 以 astro-paper-blog 和 interview-wiki 两个项目为例，详细
 
 常见的应对方式各有短板：
 
-| 方案 | 首屏体积 | 跨平台一致性 | 国内访问 | 维护成本 |
-|------|----------|-------------|---------|---------|
-| Google Fonts CDN | 小（按需） | 好 | 慢/不可用 | 零 |
-| 系统字体栈 | 零 | 差 | 好 | 零 |
-| 完整自托管 | 大（5-10MB） | 好 | 好 | 低 |
-| **unicode-range 分包** | **小（按需）** | **好** | **好** | **低** |
+| 方案                   | 首屏体积       | 跨平台一致性 | 国内访问  | 维护成本 |
+| ---------------------- | -------------- | ------------ | --------- | -------- |
+| Google Fonts CDN       | 小（按需）     | 好           | 慢/不可用 | 零       |
+| 系统字体栈             | 零             | 差           | 好        | 零       |
+| 完整自托管             | 大（5-10MB）   | 好           | 好        | 低       |
+| **unicode-range 分包** | **小（按需）** | **好**       | **好**    | **低**   |
 
 我在两个项目中落地了同一种方案——**Noto 变量字体 + unicode-range 分包**，这篇文章记录完整操作和效果。
 
@@ -35,9 +35,21 @@ description: 以 astro-paper-blog 和 interview-wiki 两个项目为例，详细
 
 ```css
 /* 传统：三个文件 */
-@font-face { font-family: "Noto Serif"; font-weight: 400; src: url(noto-400.woff2); }
-@font-face { font-family: "Noto Serif"; font-weight: 600; src: url(noto-600.woff2); }
-@font-face { font-family: "Noto Serif"; font-weight: 700; src: url(noto-700.woff2); }
+@font-face {
+  font-family: "Noto Serif";
+  font-weight: 400;
+  src: url(noto-400.woff2);
+}
+@font-face {
+  font-family: "Noto Serif";
+  font-weight: 600;
+  src: url(noto-600.woff2);
+}
+@font-face {
+  font-family: "Noto Serif";
+  font-weight: 700;
+  src: url(noto-700.woff2);
+}
 
 /* 变量字体：一个文件，覆盖 200-900 */
 @font-face {
@@ -75,7 +87,8 @@ description: 以 astro-paper-blog 和 interview-wiki 两个项目为例，详细
 @font-face {
   font-family: "Noto Serif SC Variable";
   font-weight: 200 900;
-  src: url(./files/noto-serif-sc-21-wght-normal.woff2) format("woff2-variations");
+  src: url(./files/noto-serif-sc-21-wght-normal.woff2)
+    format("woff2-variations");
   unicode-range: U+4E00-9FFF, /* ... */;
 }
 ```
@@ -187,7 +200,7 @@ astro-paper-blog 通过 `<link>` 标签加载独立的 `font.css`。Quartz 的�
 
 ```scss
 @use "./variables.scss" as *;
-@import "./fonts";    // ← 2376 行 @font-face 全部内联到主样式表
+@import "./fonts"; // ← 2376 行 @font-face 全部内联到主样式表
 ```
 
 编译后，105 条 `@font-face` 声明直接写入 `index-*.css`，不再需要额外的 `<link>` 标签。
@@ -220,13 +233,13 @@ plugins:
 
 ### 4. 两个框架的差异总结
 
-| 环节 | astro-paper-blog (Astro) | interview-wiki (Quartz) |
-|------|--------------------------|------------------------|
-| 字体获取 | `pnpm add @fontsource-variable/*` | 从 astro-paper-blog 复制 |
-| @font-face 注入 | `<link>` 标签加载独立 CSS | SCSS partial → 内联到主样式表 |
-| 路径方式 | `getAssetPath()` 兼容子目录部署 | 硬编码 `/static/fonts/` 绝对路径 |
-| 关闭外部请求 | 天然无外部请求 | 需显式设置 `fontOrigin: local` 两处 |
-| 字体文件存放 | `public/fonts/` | `quartz/static/fonts/` |
+| 环节            | astro-paper-blog (Astro)          | interview-wiki (Quartz)             |
+| --------------- | --------------------------------- | ----------------------------------- |
+| 字体获取        | `pnpm add @fontsource-variable/*` | 从 astro-paper-blog 复制            |
+| @font-face 注入 | `<link>` 标签加载独立 CSS         | SCSS partial → 内联到主样式表       |
+| 路径方式        | `getAssetPath()` 兼容子目录部署   | 硬编码 `/static/fonts/` 绝对路径    |
+| 关闭外部请求    | 天然无外部请求                    | 需显式设置 `fontOrigin: local` 两处 |
+| 字体文件存放    | `public/fonts/`                   | `quartz/static/fonts/`              |
 
 ## 效果
 
@@ -304,14 +317,14 @@ unicode-range 分包用现成的 `@fontsource` 产物，新增文章零维护，
 
 ### 量化对比
 
-| 指标 | 系统字体栈 | Google Fonts | 完整自托管 | 内容子集化 | **本方案** |
-|------|-----------|-------------|-----------|-----------|----------|
-| 首屏字体下载 | 0 | ~500 KB | 5.7 MB | 1-2 MB | **~500 KB** |
-| 跨平台一致性 | 差 | 好 | 好 | 好 | **好** |
-| 国内可用 | 好 | 不可用 | 好 | 好 | **好** |
-| 外部依赖 | 零 | 依赖 Google | 零 | 零 | **零** |
-| 新增文章维护 | 零 | 零 | 零 | 需重建字体 | **零** |
-| 变量字体支持 | — | 是 | 取决于文件 | 可能丢失 | **完整保留** |
+| 指标         | 系统字体栈 | Google Fonts | 完整自托管 | 内容子集化 | **本方案**   |
+| ------------ | ---------- | ------------ | ---------- | ---------- | ------------ |
+| 首屏字体下载 | 0          | ~500 KB      | 5.7 MB     | 1-2 MB     | **~500 KB**  |
+| 跨平台一致性 | 差         | 好           | 好         | 好         | **好**       |
+| 国内可用     | 好         | 不可用       | 好         | 好         | **好**       |
+| 外部依赖     | 零         | 依赖 Google  | 零         | 零         | **零**       |
+| 新增文章维护 | 零         | 零           | 零         | 需重建字体 | **零**       |
+| 变量字体支持 | —          | 是           | 取决于文件 | 可能丢失   | **完整保留** |
 
 ## 适用范围
 
@@ -346,8 +359,8 @@ unicode-range 分包用现成的 `@fontsource` 产物，新增文章零维护，
 <details>
 <summary>📝 更新记录（2026-07-07 17:23:22）</summary>
 
-| 时间 | 操作 | 说明 | Agent |
-|------|------|------|-------|
+| 时间                | 操作 | 说明         | Agent                                     |
+| ------------------- | ---- | ------------ | ----------------------------------------- |
 | 2026-07-07 17:23:22 | 创建 | 初次生成全文 | Claude Code 2.1.201 / deepseek-v4-pro[1m] |
 
 </details>

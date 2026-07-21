@@ -34,10 +34,10 @@ description: 做什么 + 何时用，埋触发关键词
 ---
 ```
 
-| 字段 | 必填 | 规则 |
-| --- | --- | --- |
-| `name` | 是 | ≤64 字符，仅小写字母/数字/连字符，不能含 `anthropic`、`claude` |
-| `description` | 是 | 非空，≤1024 字符，要同时写"做什么"和"何时用" |
+| 字段          | 必填 | 规则                                                           |
+| ------------- | ---- | -------------------------------------------------------------- |
+| `name`        | 是   | ≤64 字符，仅小写字母/数字/连字符，不能含 `anthropic`、`claude` |
+| `description` | 是   | 非空，≤1024 字符，要同时写"做什么"和"何时用"                   |
 
 `references/`、`scripts/`、`assets/` 这些文件夹**全部可选**。它们是"渐进式披露"的载体，不是 Skill 成立的前提。一个目录里只放一个 `SKILL.md`，就是合法的 Skill。
 
@@ -89,13 +89,13 @@ Skill 的核心机制叫**渐进式披露**，分三层加载：
 
 几条官方点名的反模式，踩中就别踩：
 
-| 反模式 | 正确做法 |
-| --- | --- |
-| Windows 反斜杠路径 `reference\guide.md` | 一律正斜杠 `reference/guide.md` |
-| 给一堆库让 Claude 选 | 给一个默认 + escape hatch |
-| 假设包装已安装 | 写明 `pip install pypdf` |
-| 时间敏感表述"2025 年 8 月前用旧 API" | 旧方案塞进 `<details>` 的 Old patterns 段 |
-| 嵌套引用超过一层 | 所有 reference 直接挂到 `SKILL.md` |
+| 反模式                                  | 正确做法                                  |
+| --------------------------------------- | ----------------------------------------- |
+| Windows 反斜杠路径 `reference\guide.md` | 一律正斜杠 `reference/guide.md`           |
+| 给一堆库让 Claude 选                    | 给一个默认 + escape hatch                 |
+| 假设包装已安装                          | 写明 `pip install pypdf`                  |
+| 时间敏感表述"2025 年 8 月前用旧 API"    | 旧方案塞进 `<details>` 的 Old patterns 段 |
+| 嵌套引用超过一层                        | 所有 reference 直接挂到 `SKILL.md`        |
 
 ## Subagent：独立上下文的工人
 
@@ -103,12 +103,12 @@ Subagent 是一个跑在**独立上下文窗口**里的 AI 助手，有自己的
 
 它和 Skill 的本质区别：
 
-| | Skill | Subagent |
-| --- | --- | --- |
-| 运行上下文 | 主对话上下文 | 独立上下文窗口 |
-| 隔离性 | 共享 | 隔离，只返回摘要 |
-| 解决的痛点 | 省重复 | 省上下文 |
-| 形态 | 指令/资源文件 | 有独立 system prompt + 工具白名单的 agent |
+|            | Skill         | Subagent                                  |
+| ---------- | ------------- | ----------------------------------------- |
+| 运行上下文 | 主对话上下文  | 独立上下文窗口                            |
+| 隔离性     | 共享          | 隔离，只返回摘要                          |
+| 解决的痛点 | 省重复        | 省上下文                                  |
+| 形态       | 指令/资源文件 | 有独立 system prompt + 工具白名单的 agent |
 
 文件格式是 markdown + YAML frontmatter，正文就是子 agent 的 system prompt：
 
@@ -116,10 +116,9 @@ Subagent 是一个跑在**独立上下文窗口**里的 AI 助手，有自己的
 ---
 name: code-reviewer
 description: Reviews code for quality. Use proactively after code changes.
-tools: Read, Grep, Glob, Bash      # 省略则继承全部工具
-model: inherit                      # sonnet/opus/haiku/fable/inherit
+tools: Read, Grep, Glob, Bash # 省略则继承全部工具
+model: inherit # sonnet/opus/haiku/fable/inherit
 ---
-
 You are a senior code reviewer. ...
 ```
 
@@ -143,13 +142,13 @@ Subagent 的隔离不是绝对的，这几个边界要记牢：
 
 这三者的选择，取决于任务的形状：
 
-| 场景 | 选择 |
-| --- | --- |
-| 频繁来回、多阶段共享上下文、快速小改、延迟敏感 | 主对话 |
+| 场景                                                     | 选择     |
+| -------------------------------------------------------- | -------- |
+| 频繁来回、多阶段共享上下文、快速小改、延迟敏感           | 主对话   |
 | 产出冗长输出（跑测试、抓文档、处理日志）且主对话不再引用 | Subagent |
-| 要工具限制或独立权限 | Subagent |
-| 工作自包含、可返回摘要 | Subagent |
-| 可复用的提示/工作流，想在主上下文跑 | Skill |
+| 要工具限制或独立权限                                     | Subagent |
+| 工作自包含、可返回摘要                                   | Subagent |
+| 可复用的提示/工作流，想在主上下文跑                      | Skill    |
 
 Subagent 最有效的用法，是**隔离高产输出操作**：
 
@@ -194,8 +193,8 @@ Skill 把"同一套规矩"固化为文件，靠 `description` 在合适场景被
 <details>
 <summary>📝 更新记录（2026-07-07 18:33:32）</summary>
 
-| 时间 | 操作 | 说明 | Agent |
-|------|------|------|-------|
+| 时间                | 操作 | 说明         | Agent                                    |
+| ------------------- | ---- | ------------ | ---------------------------------------- |
 | 2026-07-07 18:33:32 | 创建 | 初次生成全文 | Claude Code 2.1.197 / aliyun/glm-5.2[1m] |
 
 </details>

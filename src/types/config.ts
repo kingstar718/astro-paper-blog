@@ -79,13 +79,7 @@ interface AstroPaperConfig {
 type ResolvedSiteConfig = Required<
   Pick<
     SiteConfig,
-    | "url"
-    | "title"
-    | "description"
-    | "author"
-    | "lang"
-    | "timezone"
-    | "dir"
+    "url" | "title" | "description" | "author" | "lang" | "timezone" | "dir"
   >
 > &
   Pick<SiteConfig, "profile" | "googleVerification">;
