@@ -15,6 +15,7 @@ export interface UIStrings {
     nextPost: string;
     copy: string;
     copied: string;
+    tableOfContents: string;
   };
   pagination: {
     prev: string;

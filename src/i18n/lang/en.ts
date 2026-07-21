@@ -17,6 +17,7 @@ export default {
     nextPost: "Next Post",
     copy: "Copy",
     copied: "Copied",
+    tableOfContents: "Table of Contents",
   },
   pagination: {
     prev: "Prev",

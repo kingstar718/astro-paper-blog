@@ -12,6 +12,7 @@ import EditPost from "./_components/EditPost.astro";
 import BackButton from "./_components/BackButton.astro";
 import BackToTopButton from "./_components/BackToTopButton.astro";
 import AdjacentPostNav from "./_components/AdjacentPostNav.astro";
+import TableOfContents from "./_components/TableOfContents.astro";
 import { useTranslations } from "@/i18n";
 import config from "@/config";
 
@@ -70,7 +71,7 @@ const {
   hideEditPost,
 } = post.data;
 
-const { Content } = await render(post);
+const { Content, headings } = await render(post);
 ---
 
 <PostLayout
@@ -81,6 +82,8 @@ const { Content } = await render(post);
   modDatetime={modDatetime}
 >
   <Header />
+
+  <TableOfContents {headings} />
 
   <BackButton />
 
@@ -111,6 +114,8 @@ const { Content } = await render(post);
       </span>
       <EditPost {hideEditPost} {post} class="max-sm:hidden" />
     </div>
+
+    <TableOfContents {headings} variant="inline" />
 
     <article
       id="article"

@@ -1,7 +1,7 @@
 ---
 author: kingstar718
 pubDatetime: 2026-05-25T00:00:00Z
-modDatetime: 2026-06-22T07:40:00Z
+modDatetime: 2026-07-21T02:52:45Z
 title: AstroPaper 博客改造日志
 featured: false
 draft: false
@@ -213,3 +213,62 @@ Noto Sans Mono   2 个拉丁字符分片    约 0.18 MB
 原来的 JetBrains Mono 文件和声明已经移除。Tailwind 的 `font-mono` 也指向 `--font-code`，归档日期等界面元素会和代码区域使用同一套等宽字体。
 
 字体 CSS 最初通过全局样式中的 `@import` 加载，但经过 Tailwind 和 PostCSS 展开后触发了 `@import must precede all other statements` 警告。最终改为在 `Layout.astro` 的 `<head>` 中加载三份同源字体样式表，并通过 `getAssetPath()` 生成路径，以兼容子目录部署。
+
+## 2026-07-21 — 升级到 Astro 7
+
+把 Astro 从 6.4.8 升级到 7.1.1，`@astrojs/mdx` 从 5 升到 7，sitemap、rss 一并跟到兼容版本。Node 要求不变（`>=22.12.0`）。
+
+Astro 7 默认改用原生的 Satteri 引擎渲染 Markdown，不再走 remark/rehype。本站重度依赖 `remark-toc`、`remark-collapse` 和 shiki 的自定义 transformer，因此选择保守路径：安装 `@astrojs/markdown-remark`，把 markdown 配置迁移到 `processor: unified({ remarkPlugins: [...] })`，shiki 配置保持不动。现有高亮和插件行为完全不变。
+
+顺带解决了升级前就存在的 `tailwindcss()` Vite 插件类型报错——它随 Vite 8 与 `@tailwindcss/vite` 4.3.3 对齐后自动消失。
+
+## 2026-07-21 — 精简 i18n 与移除模板残留
+
+i18n 加载机制过度设计：原本用 `import.meta.glob` 动态扫描语言目录，对只有中英两种语言来说没必要。改为直接静态 import `zh` 和 `en`，删除从未被调用的 `format.ts`（`tplStr` 死代码），并清理了一批没有引用的翻译键。
+
+项目里还堆着不少模板残留，一并清掉：
+
+- Docker 相关（`Dockerfile`、`docker-compose.yml`、`.dockerignore`）——本站不用容器部署
+- `cz.yaml`（commitizen 配置，实际未安装）、上游的 `CHANGELOG.md`、`AstroPaper-lighthouse-score.svg` 徽章
+- `.github/` 下的开源协作模板（贡献指南、行为准则、issue/PR 模板），以及仍指向原作者的 `FUNDING.yml`
+
+最后对全仓做了一次 prettier 格式化，把此前积累的格式漂移统一掉。
+
+## 2026-07-21 — UI 文案收敛与配置地图
+
+站点本有完整的 i18n 机制，但个别文案仍硬编码在组件里——首页的“全部文章”按钮、文章页的“复制 / 已复制”。把它们收回 i18n（内联脚本通过 `data-*` 属性拿到翻译值），从此“改文案 = 只改 i18n”这条规则才真正成立。
+
+另外新增了 `docs/config-map.md` 配置地图：用一张“想改 X 该去哪个文件”的对照表，解决设置分散在 `astro-paper.config.ts`、`theme.css`、`astro.config.ts` 等多处、不好找的问题，并在相关文件之间加了交叉引用注释。
+
+## 2026-07-21 — 文章目录（TOC）
+
+给文章页加了目录。数据来自 `render()` 返回的 `headings`，构建期直接生成，不在客户端解析 DOM。
+
+- **桌面端**：在正文右侧空白区悬浮，随滚动高亮当前章节（scroll-spy），可折叠，展开状态记在 `localStorage`
+- **移动端**：正文顶部内联折叠，默认收起，点开跳转
+
+只列 `h2` / `h3`，标题少于两个的文章不显示目录。
+
+## 2026-07-21 — 导航栏重新设计
+
+旧导航栏把“去页面”和“就地操作”混在一起：文章、标签、关于是文字，归档却是图标，移动端又换成另一套两列网格，缺乏统一心智。
+
+重新按“导航是文字、工具是图标”分组：
+
+- 桌面端：文章、标签、关于、归档四个文字导航并列，用分隔线隔开搜索、主题切换两个图标工具
+- 移动端：搜索和主题图标常驻，汉堡按钮展开文字导航下拉，与桌面端保持同一套结构
+
+同时把选中项的波浪下划线改为强调色加粗，并清理了重构后不再使用的 `IconArchive`、`IconUnderline` 图标和一个未定义的遗留样式类。
+
+---
+
+> 本文部分内容由 AI 辅助生成，以下为更新记录。
+
+<details>
+<summary>📝 更新记录（2026-07-21 10:52:45）</summary>
+
+| 时间                | 操作 | 说明                                                                                                              | Agent                                 |
+| ------------------- | ---- | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
+| 2026-07-21 10:52:45 | 修改 | 追加 Astro 7 升级、i18n 精简与模板残留清理、UI 文案收敛与配置地图、文章目录、导航栏重新设计等 2026-07-21 改动记录 | Claude Code 2.1.215 / claude-opus-4-8 |
+
+</details>

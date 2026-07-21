@@ -1,0 +1,116 @@
+---
+import type { MarkdownHeading } from "astro";
+import { useTranslations } from "@/i18n";
+
+type Props = {
+  headings: MarkdownHeading[];
+  /** sidebar：桌面端右侧悬浮；inline：移动端正文顶部内联折叠 */
+  variant?: "sidebar" | "inline";
+};
+
+const { headings, variant = "sidebar" } = Astro.props;
+const t = useTranslations(Astro.currentLocale);
+
+// 只展示 h2/h3，短文章（<2 个标题）不显示目录
+const toc = headings.filter(h => h.depth === 2 || h.depth === 3);
+
+const isSidebar = variant === "sidebar";
+---
+
+{
+  toc.length >= 2 && (
+    <details
+      id={isSidebar ? "toc-details" : undefined}
+      open={isSidebar}
+      class:list={[
+        "text-muted-foreground",
+        isSidebar
+          ? "fixed top-32 right-4 left-[calc(50%_+_24rem_+_1.5rem)] z-20 hidden max-w-64 xl:block"
+          : "my-6 xl:hidden",
+      ]}
+    >
+      <summary class="hover:text-accent focus-visible:outline-accent flex cursor-pointer items-center gap-1 text-sm font-medium select-none focus-visible:no-underline focus-visible:outline-2 focus-visible:outline-dashed">
+        {t.post.tableOfContents}
+      </summary>
+      <nav
+        aria-label={t.post.tableOfContents}
+        class:list={[
+          "border-border mt-3 overflow-y-auto border-s ps-3 text-sm",
+          { "max-h-[calc(100vh-12rem)]": isSidebar },
+        ]}
+      >
+        <ul>
+          {toc.map(h => (
+            <li class:list={[{ "ps-3": h.depth === 3 }]}>
+              <a
+                href={`#${h.slug}`}
+                data-toc-link={h.slug}
+                class="hover:text-accent aria-[current=true]:text-accent block py-1 no-underline transition-colors aria-[current=true]:font-medium"
+              >
+                {h.text}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </details>
+  )
+}
+
+<script>
+  function initTableOfContents() {
+    // 脚本只作用于桌面侧边目录（inline 变体无 id，靠原生锚点跳转即可）
+    const sidebar = document.getElementById(
+      "toc-details"
+    ) as HTMLDetailsElement | null;
+    if (!sidebar) return;
+
+    const links = Array.from(
+      sidebar.querySelectorAll<HTMLAnchorElement>("[data-toc-link]")
+    );
+    if (!links.length) return;
+
+    // 记住展开/折叠状态
+    const stored = localStorage.getItem("toc-open");
+    if (stored !== null) sidebar.open = stored === "true";
+    sidebar.addEventListener("toggle", () => {
+      localStorage.setItem("toc-open", String(sidebar.open));
+    });
+
+    // scroll-spy：高亮当前所在章节
+    const linkBySlug = new Map<string, HTMLAnchorElement>();
+    for (const link of links) {
+      const slug = link.dataset.tocLink;
+      if (slug) linkBySlug.set(slug, link);
+    }
+
+    let activeLink: HTMLAnchorElement | null = null;
+    const setActive = (slug: string) => {
+      const link = linkBySlug.get(slug);
+      if (!link || link === activeLink) return;
+      activeLink?.removeAttribute("aria-current");
+      link.setAttribute("aria-current", "true");
+      activeLink = link;
+    };
+
+    const observer = new IntersectionObserver(
+      entries => {
+        for (const entry of entries) {
+          if (entry.isIntersecting && entry.target.id) {
+            setActive(entry.target.id);
+          }
+        }
+      },
+      { rootMargin: "0px 0px -80% 0px", threshold: 0 }
+    );
+
+    const headingEls = document.querySelectorAll<HTMLElement>(
+      "#article :is(h2, h3)"
+    );
+    for (const heading of headingEls) {
+      if (heading.id) observer.observe(heading);
+    }
+  }
+
+  document.addEventListener("astro:page-load", initTableOfContents);
+</script>

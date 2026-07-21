@@ -17,6 +17,7 @@ export default {
     nextPost: "下一篇",
     copy: "复制",
     copied: "已复制",
+    tableOfContents: "目录",
   },
   pagination: {
     prev: "上一页",
