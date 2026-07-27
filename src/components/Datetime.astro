@@ -3,7 +3,6 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import "dayjs/locale/zh-cn";
-import IconCalendar from "@/assets/icons/IconCalendar.svg";
 import config from "@/config";
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -11,19 +10,20 @@ dayjs.extend(timezone);
 type Props = {
   class?: string;
   size?: "sm" | "lg";
-  icon?: boolean;
   pubDatetime: string | Date;
   timezone?: string;
   modDatetime?: string | Date | null;
+  /** dayjs 格式串，默认只显示日期 */
+  dateFormat?: string;
 };
 
 const {
   pubDatetime,
   modDatetime,
   size = "sm",
-  icon = true,
   class: className = "",
   timezone: postTimezone,
+  dateFormat = "YYYY-MM-DD",
 } = Astro.props;
 
 const isModified = modDatetime && modDatetime > pubDatetime;
@@ -32,26 +32,10 @@ const datetime = dayjs(isModified ? modDatetime : pubDatetime).tz(
   postTimezone ?? config.site.timezone
 );
 
-const date = datetime.locale("zh-cn").format("YYYY-MM-DD");
+const date = datetime.locale("zh-cn").format(dateFormat);
 ---
 
-<div
-  class:list={[
-    "text-muted-foreground flex items-center",
-    { "gap-x-2": icon },
-    className,
-  ]}
->
-  {
-    icon && (
-      <IconCalendar
-        class:list={[
-          "inline-block size-6 min-w-5.5",
-          { "scale-90": size === "sm" },
-        ]}
-      />
-    )
-  }
+<div class:list={["text-muted-foreground flex items-center", className]}>
   <time
     class:list={["text-sm", { "sm:text-base": size === "lg" }]}
     datetime={datetime.toISOString()}

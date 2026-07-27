@@ -1,0 +1,32 @@
+---
+import { useTranslations } from "@/i18n";
+
+// 列表页尾部的统计行，放在分页所在的位置，避免在顶部打断时间线。
+type Props = {
+  /** 条目总数 */
+  total: number;
+  /** 量词，如「篇」「条」 */
+  unit: string;
+  /** 分组统计，如 [["2026", 4], ["2025", 8]] */
+  groups: [string, number][];
+};
+
+const { total, unit, groups } = Astro.props;
+const t = useTranslations(Astro.currentLocale);
+---
+
+<div
+  class="text-muted-foreground mt-10 flex flex-wrap justify-center gap-x-3 gap-y-1 text-sm"
+>
+  <span>{t.pages.postsTotal} {total} {unit}</span>
+  {
+    groups.map(([label, count]) => (
+      <span>
+        <span aria-hidden="true" class="me-3">
+          ·
+        </span>
+        {label} {count} {unit}
+      </span>
+    ))
+  }
+</div>

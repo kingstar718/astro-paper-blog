@@ -5,19 +5,14 @@ export default {
     home: "Home",
     posts: "Posts",
     notes: "Notes",
-    tags: "Tags",
     about: "About",
     search: "Search",
   },
   post: {
-    backToTop: "Back to top",
-    goBack: "Go back",
-    editPage: "Edit page",
-    previousPost: "Previous Post",
-    nextPost: "Next Post",
     copy: "Copy",
     copied: "Copied",
     tableOfContents: "Table of Contents",
+    pinTableOfContents: "Pin table of contents",
   },
   pagination: {
     prev: "Prev",
@@ -28,16 +23,17 @@ export default {
     copyright: "Copyright",
     allRightsReserved: "All rights reserved.",
   },
+  home: {
+    allPosts: "All posts",
+    allNotes: "All notes",
+  },
   pages: {
-    tagTitle: "Tag",
-    tagDesc: "All the articles with the tag",
-
-    tagsTitle: "Tags",
-
     postsTitle: "Posts",
     postsUnit: "posts",
+    postsTotal: "Total",
 
     notesTitle: "Notes",
+    notesUnit: "notes",
 
     searchTitle: "Search",
   },

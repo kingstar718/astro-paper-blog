@@ -32,7 +32,7 @@ export default defineConfig({
     }),
     // 代码块配色。页面主色板见 src/styles/theme.css，代码块样式见 src/styles/typography.css（.astro-code）。
     shikiConfig: {
-      themes: { light: "min-light", dark: "night-owl" },
+      themes: { light: "min-light", dark: "min-dark" },
       defaultColor: false,
       wrap: false,
       transformers: [

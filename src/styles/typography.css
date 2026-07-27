@@ -3,18 +3,33 @@
 @layer base {
   /* ===== Override default Tailwind Typography styles ===== */
   .app-prose {
-    @apply prose;
+    /* 阅读态正文（文章、关于页、短文）统一在这里定字号和行高：
+       中文在同 px 下比西文视觉更小，17/18px 更耐读；
+       Tailwind preflight 默认行高 1.5 对中文太挤，汉字全角、笔画密，
+       行距不够时上下行会粘在一起。 */
+    @apply prose text-[1.0625rem] leading-[1.8] sm:text-[1.125rem];
 
     h1,
     h2,
     h3,
     h4,
     th {
-      @apply text-foreground mb-3;
+      @apply text-foreground;
+    }
+
+    /* 标题层级只靠字号、字重和段前留白区分：
+       中文没有真正的斜体，浏览器合成的倾斜体很难看，所以不用斜体；
+       段前留白比字号更能表达从属关系，因此三级之间拉开的是 margin-top。 */
+    h2 {
+      @apply mt-12 mb-3 text-[1.35em] leading-snug font-semibold;
     }
 
     h3 {
-      @apply italic;
+      @apply mt-8 mb-2 text-[1.15em] leading-snug font-semibold;
+    }
+
+    h4 {
+      @apply mt-6 mb-2 text-[1em] leading-snug font-semibold;
     }
 
     p,
@@ -27,8 +42,9 @@
       @apply text-foreground;
     }
 
+    /* 段距要明显大于行距才能分段；0.8em 不到半行，段落会糊成一片 */
     p {
-      @apply my-[0.8em];
+      @apply my-[1.4em];
     }
 
     a {
@@ -40,7 +56,7 @@
     }
 
     li {
-      @apply marker:text-accent;
+      @apply marker:text-muted-foreground;
     }
 
     hr {
@@ -55,7 +71,10 @@
       @apply opacity-75;
     }
 
+    /* prose 默认把表格压到 0.875em，中文在表格里会偏小 */
     table {
+      @apply text-[0.95em];
+
       th,
       td {
         @apply border-border border p-2;
@@ -66,8 +85,10 @@
       }
     }
 
+    /* 行内代码：只留左右内边距，上下留白会顶开行、破坏中文的行节奏；
+       左右各留 0.15em 外边距，中英混排时不至于贴着汉字 */
     code {
-      @apply bg-muted/75 text-foreground rounded p-1 wrap-break-word before:content-none after:content-none;
+      @apply bg-muted/75 text-foreground mx-[0.15em] rounded px-1.5 py-0.5 font-medium wrap-break-word before:content-none after:content-none;
       font-family: var(--font-code);
     }
 
@@ -75,8 +96,9 @@
       @apply flex-[1_0_100%] bg-inherit p-0;
     }
 
+    /* prose 默认给引用块加斜体，中文没有真正的意大利体，去掉 */
     blockquote {
-      @apply border-s-accent/80 wrap-break-word opacity-80;
+      @apply border-s-accent/80 font-normal wrap-break-word not-italic opacity-80;
     }
 
     details {

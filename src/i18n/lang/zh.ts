@@ -5,19 +5,14 @@ export default {
     home: "首页",
     posts: "文章",
     notes: "短文",
-    tags: "标签",
     about: "关于",
     search: "搜索",
   },
   post: {
-    backToTop: "回到顶部",
-    goBack: "返回",
-    editPage: "编辑页面",
-    previousPost: "上一篇",
-    nextPost: "下一篇",
     copy: "复制",
     copied: "已复制",
     tableOfContents: "目录",
+    pinTableOfContents: "固定目录",
   },
   pagination: {
     prev: "上一页",
@@ -28,16 +23,17 @@ export default {
     copyright: "Copyright",
     allRightsReserved: "All rights reserved.",
   },
+  home: {
+    allPosts: "全部文章",
+    allNotes: "全部短文",
+  },
   pages: {
-    tagTitle: "标签",
-    tagDesc: "所有带有此标签的文章",
-
-    tagsTitle: "标签",
-
     postsTitle: "文章",
     postsUnit: "篇",
+    postsTotal: "共",
 
     notesTitle: "短文",
+    notesUnit: "条",
 
     searchTitle: "搜索",
   },

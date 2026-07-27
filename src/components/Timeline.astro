@@ -1,0 +1,13 @@
+---
+// 时间线容器：左边框即为竖线，条目用 <TimelineItem> 渲染。
+// 注意 ps-6 与 TimelineItem 圆点的左移量是配套的，改一个要改另一个。
+type Props = {
+  class?: string;
+};
+
+const { class: className } = Astro.props;
+---
+
+<div class:list={["border-border relative border-s-2 ps-6", className]}>
+  <slot />
+</div>

@@ -1,13 +1,12 @@
-import type { CollectionEntry } from "astro:content";
-
 type GroupKey = string | number | symbol;
 type GroupFunction<T> = (item: T, index?: number) => GroupKey;
 
-export function getPostsByGroupCondition(
-  posts: CollectionEntry<"posts">[],
-  groupFunction: GroupFunction<CollectionEntry<"posts">>
+// 文章、短文都会用到，所以对条目类型不做限定
+export function getPostsByGroupCondition<T>(
+  posts: T[],
+  groupFunction: GroupFunction<T>
 ) {
-  const result: Record<GroupKey, CollectionEntry<"posts">[]> = {};
+  const result: Record<GroupKey, T[]> = {};
 
   for (let i = 0; i < posts.length; i++) {
     const item = posts[i];

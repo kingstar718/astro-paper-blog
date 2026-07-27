@@ -23,10 +23,12 @@ const config: ResolvedAstroPaperConfig = {
     scheduledPostMargin:
       userConfig.posts?.scheduledPostMargin ?? 15 * 60 * 1000,
   },
+  notes: {
+    perPage: userConfig.notes?.perPage ?? 10,
+    perIndex: userConfig.notes?.perIndex ?? userConfig.posts?.perIndex ?? 4,
+  },
   features: {
     lightAndDarkMode: userConfig.features?.lightAndDarkMode ?? true,
-    showBackButton: userConfig.features?.showBackButton ?? true,
-    editPost: userConfig.features?.editPost ?? { enabled: false },
     search: userConfig.features?.search ?? "pagefind",
   },
   socials: userConfig.socials ?? [],

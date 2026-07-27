@@ -3,19 +3,14 @@ export interface UIStrings {
     home: string;
     posts: string;
     notes: string;
-    tags: string;
     about: string;
     search: string;
   };
   post: {
-    backToTop: string;
-    goBack: string;
-    editPage: string;
-    previousPost: string;
-    nextPost: string;
     copy: string;
     copied: string;
     tableOfContents: string;
+    pinTableOfContents: string;
   };
   pagination: {
     prev: string;
@@ -26,16 +21,17 @@ export interface UIStrings {
     copyright: string;
     allRightsReserved: string;
   };
+  home: {
+    allPosts: string;
+    allNotes: string;
+  };
   pages: {
-    tagTitle: string;
-    tagDesc: string;
-
-    tagsTitle: string;
-
     postsTitle: string;
     postsUnit: string;
+    postsTotal: string;
 
     notesTitle: string;
+    notesUnit: string;
 
     searchTitle: string;
   };

@@ -1,0 +1,84 @@
+---
+import type { GetStaticPaths } from "astro";
+import { getCollection, render } from "astro:content";
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Main from "@/components/Main.astro";
+import Footer from "@/components/Footer.astro";
+import Timeline from "@/components/Timeline.astro";
+import TimelineItem from "@/components/TimelineItem.astro";
+import TimelineStats from "@/components/TimelineStats.astro";
+import Pagination from "@/components/Pagination.astro";
+import { getPostsByGroupCondition } from "@/utils/getPostsByGroupCondition";
+import { useTranslations } from "@/i18n";
+import config from "@/config";
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const now = Date.now();
+  const notes = (await getCollection("notes", ({ data }) => !data.draft))
+    .filter(n => n.data.pubDatetime.getTime() <= now)
+    .sort(
+      (a, b) => b.data.pubDatetime.getTime() - a.data.pubDatetime.getTime()
+    );
+
+  // 条目本身已带完整年份，年份只用于页尾统计；统计的是全部短文而非当前页
+  const years: [string, number][] = Object.entries(
+    getPostsByGroupCondition(notes, note => note.data.pubDatetime.getFullYear())
+  )
+    .sort(([a], [b]) => Number(b) - Number(a))
+    .map(([year, yearNotes]) => [year, yearNotes.length]);
+
+  return paginate(notes, {
+    pageSize: config.notes.perPage,
+    props: { total: notes.length, years },
+  });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+const { total, years } = Astro.props as {
+  total: number;
+  years: [string, number][];
+};
+
+const locale = Astro.currentLocale ?? config.site.lang;
+const t = useTranslations(locale);
+
+// 短文没有详情页，正文在列表里直接渲染
+const renderedNotes = await Promise.all(
+  page.data.map(async note => ({
+    note,
+    Content: (await render(note)).Content,
+  }))
+);
+---
+
+<Layout title={`${t.pages.notesTitle} | ${config.site.title}`}>
+  <Header />
+
+  <Main class="pt-8">
+    {/* 整页都是短文，不需要类型标签 */}
+    <Timeline>
+      {
+        renderedNotes.map(({ note, Content }) => (
+          <TimelineItem
+            kind="note"
+            pubDatetime={note.data.pubDatetime}
+            modDatetime={note.data.modDatetime}
+            timezone={note.data.timezone}
+          >
+            {/* 段落间距收紧，并去掉首尾外边距，避免和条目间距叠加 */}
+            <div class="app-prose mt-2 max-w-none [&_p]:my-[0.45em] [&>:first-child]:mt-0 [&>:last-child]:mb-0">
+              <Content />
+            </div>
+          </TimelineItem>
+        ))
+      }
+    </Timeline>
+
+    <Pagination page={page} />
+
+    <TimelineStats total={total} unit={t.pages.notesUnit} groups={years} />
+  </Main>
+
+  <Footer />
+</Layout>

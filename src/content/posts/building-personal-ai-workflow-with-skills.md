@@ -4,10 +4,6 @@ pubDatetime: 2026-07-07T09:33:56Z
 title: 用 Claude Code Skills 打造个人 AI 工作流
 featured: false
 draft: false
-tags:
-  - ai
-  - 折腾
-  - blog
 description: 介绍 my-skills 项目的设计思路：如何用 SKILL.md 将 git 提交规范、博客写作流程和终端状态栏固化为可复用的 AI 指令，以及安全优先、可审计、跨平台的设计原则。
 ---
 

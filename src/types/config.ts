@@ -31,19 +31,16 @@ interface PostsConfig {
   scheduledPostMargin?: number;
 }
 
+interface NotesConfig {
+  /** Notes per page on the notes listing page */
+  perPage?: number;
+  /** Notes shown on the index/home page */
+  perIndex?: number;
+}
+
 interface FeaturesConfig {
   /** Enable light/dark mode toggle. Defaults to true. */
   lightAndDarkMode?: boolean;
-  /** Show back button on post detail pages. Defaults to true. */
-  showBackButton?: boolean;
-  /** "Edit page" link shown on post detail pages. */
-  editPost?:
-    | {
-        enabled: true;
-        /** Base URL for the edit link, e.g. GitHub edit URL */
-        url: string;
-      }
-    | { enabled: false };
   /**
    * Search provider. "pagefind" ships in the base template.
    * Set to false to disable search entirely.
@@ -69,6 +66,7 @@ interface SocialLink {
 interface AstroPaperConfig {
   site: SiteConfig;
   posts?: PostsConfig;
+  notes?: NotesConfig;
   features?: FeaturesConfig;
   /** Social profile links shown in footer */
   socials?: SocialLink[];
@@ -85,6 +83,7 @@ type ResolvedSiteConfig = Required<
 export interface ResolvedAstroPaperConfig {
   site: ResolvedSiteConfig;
   posts: Required<PostsConfig>;
+  notes: Required<NotesConfig>;
   features: Required<FeaturesConfig>;
   socials: SocialLink[];
 }

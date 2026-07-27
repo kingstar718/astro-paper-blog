@@ -35,7 +35,6 @@ const isActive = (path: string) => {
 const navLinks = [
   { path: "/posts", href: "posts", label: t.nav.posts },
   { path: "/notes", href: "notes", label: t.nav.notes },
-  { path: "/tags", href: "tags", label: t.nav.tags },
   { path: "/about", href: "about", label: t.nav.about },
 ];
 
@@ -53,7 +52,7 @@ const navLinkClass =
 
 <header class="app-layout">
   <div
-    class="border-border bg-background relative flex items-center justify-between border-b py-4 sm:py-6"
+    class="bg-background relative flex items-center justify-between py-4 sm:py-6"
   >
     <a
       href={getRelativeLocaleUrl(locale, "")}

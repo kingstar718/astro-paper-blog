@@ -1,5 +1,5 @@
 // 这里只放"站点级"设置。主题色、字体、代码高亮、文案等在别处，
-// 不确定改哪个文件时看 docs/config-map.md。
+// 不确定改哪个文件时看 README 的「配置地图」。
 import { defineAstroPaperConfig } from "./src/types/config";
 
 export default defineAstroPaperConfig({
@@ -18,13 +18,12 @@ export default defineAstroPaperConfig({
     perIndex: 4,
     scheduledPostMargin: 15 * 60 * 1000,
   },
+  notes: {
+    perPage: 10,
+    perIndex: 4,
+  },
   features: {
     lightAndDarkMode: true,
-    showBackButton: true,
-    editPost: {
-      enabled: true,
-      url: "https://github.com/kingstar718/astro-paper-blog/edit/main/",
-    },
     search: "pagefind",
   },
   socials: [

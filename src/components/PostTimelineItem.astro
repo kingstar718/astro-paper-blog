@@ -1,0 +1,48 @@
+---
+import type { CollectionEntry } from "astro:content";
+import TimelineItem from "./TimelineItem.astro";
+import { getPostUrl } from "@/utils/getPostPaths";
+import { slugifyStr } from "@/utils/slugify";
+
+// 时间线上的一篇文章：首页和文章列表页共用，保证两处渲染完全一致。
+type Props = {
+  post: CollectionEntry<"posts">;
+  /** 类型标签，仅在首页与短文混排时传入 */
+  label?: string;
+};
+
+const { post, label } = Astro.props;
+const { title, description, pubDatetime, modDatetime, timezone, featured } =
+  post.data;
+const url = getPostUrl(post.id, post.filePath, Astro.currentLocale);
+---
+
+<TimelineItem
+  kind="post"
+  pubDatetime={pubDatetime}
+  modDatetime={modDatetime}
+  timezone={timezone}
+  label={label}
+>
+  <a
+    href={url}
+    class="hover:text-accent mt-1 inline-block text-lg font-medium decoration-dashed underline-offset-4 hover:underline focus-visible:no-underline focus-visible:underline-offset-0"
+  >
+    <h2 transition:name={slugifyStr(title.replaceAll(".", "-"))}>
+      {
+        featured && (
+          <svg
+            class="me-1 inline size-3.5 align-[-0.15em]"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+          </svg>
+        )
+      }
+      {title}
+    </h2>
+  </a>
+  <p class="mt-1 leading-relaxed">{description}</p>
+</TimelineItem>

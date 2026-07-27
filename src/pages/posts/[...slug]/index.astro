@@ -4,14 +4,9 @@ import PostLayout from "@/layouts/PostLayout.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import Datetime from "@/components/Datetime.astro";
-import Tag from "@/components/Tag.astro";
 import { getPostSlug } from "@/utils/getPostPaths";
 import { getSortedPosts } from "@/utils/getSortedPosts";
 import { slugifyStr } from "@/utils/slugify";
-import EditPost from "./_components/EditPost.astro";
-import BackButton from "./_components/BackButton.astro";
-import BackToTopButton from "./_components/BackToTopButton.astro";
-import AdjacentPostNav from "./_components/AdjacentPostNav.astro";
 import TableOfContents from "./_components/TableOfContents.astro";
 import { useTranslations } from "@/i18n";
 import config from "@/config";
@@ -22,54 +17,20 @@ export async function getStaticPaths() {
   const posts = await getCollection("posts");
   const sortedPosts = getSortedPosts(posts);
 
-  return sortedPosts.map((post, index) => ({
+  return sortedPosts.map(post => ({
     params: { slug: getPostSlug(post.id, post.filePath) },
-    props: {
-      post,
-      prevPost:
-        index > 0
-          ? {
-              id: sortedPosts[index - 1].id,
-              title: sortedPosts[index - 1].data.title,
-              filePath: sortedPosts[index - 1].filePath,
-            }
-          : null,
-      nextPost:
-        index < sortedPosts.length - 1
-          ? {
-              id: sortedPosts[index + 1].id,
-              title: sortedPosts[index + 1].data.title,
-              filePath: sortedPosts[index + 1].filePath,
-            }
-          : null,
-    },
+    props: { post },
   }));
 }
 
-type AdjacentPost = {
-  id: string;
-  title: string;
-  filePath: string | undefined;
-} | null;
-
 type Props = {
   post: CollectionEntry<"posts">;
-  prevPost: AdjacentPost;
-  nextPost: AdjacentPost;
 };
 
-const { post, prevPost, nextPost } = Astro.props;
+const { post } = Astro.props;
 
-const {
-  title,
-  description,
-  canonicalURL,
-  pubDatetime,
-  modDatetime,
-  timezone,
-  tags,
-  hideEditPost,
-} = post.data;
+const { title, description, canonicalURL, pubDatetime, modDatetime, timezone } =
+  post.data;
 
 const { Content, headings } = await render(post);
 ---
@@ -85,35 +46,21 @@ const { Content, headings } = await render(post);
 
   <TableOfContents {headings} />
 
-  <BackButton />
-
   <main
     id="main-content"
-    class:list={["app-layout", { "mt-8": !config.features.showBackButton }]}
+    class="app-layout mt-8"
     data-pagefind-body
     data-copy-label={t.post.copy}
     data-copied-label={t.post.copied}
   >
     <h1
       style={{ viewTransitionName: slugifyStr(title.replaceAll(".", "-")) }}
-      class="text-accent inline-block text-2xl font-bold sm:text-3xl"
+      class="inline-block text-2xl font-bold sm:text-3xl"
     >
       {title}
     </h1>
 
-    <div class="my-2 flex items-center gap-2">
-      <Datetime {pubDatetime} {modDatetime} {timezone} size="lg" />
-      <span
-        aria-hidden="true"
-        class:list={[
-          "text-muted-foreground max-sm:hidden",
-          { hidden: !config.features.editPost?.enabled || hideEditPost },
-        ]}
-      >
-        |
-      </span>
-      <EditPost {hideEditPost} {post} class="max-sm:hidden" />
-    </div>
+    <Datetime {pubDatetime} {modDatetime} {timezone} size="lg" class="my-2" />
 
     <TableOfContents {headings} variant="inline" />
 
@@ -127,108 +74,17 @@ const { Content, headings } = await render(post);
     >
       <Content />
     </article>
-
-    <hr class="my-8 border-dashed" />
-
-    <EditPost class="sm:hidden" {hideEditPost} {post} />
-
-    <BackToTopButton />
-
-    <ul class="mt-4 mb-8 flex flex-wrap gap-4 sm:my-8">
-      {tags.map(tag => <Tag tag={slugifyStr(tag)} tagName={tag} size="sm" />)}
-    </ul>
-
-    <hr class="my-8 border-dashed" />
-
-    <AdjacentPostNav {prevPost} {nextPost} />
   </main>
   <Footer />
 </PostLayout>
 
 <script is:inline data-astro-rerun>
   (() => {
-    const progressContainerId = "reading-progress-container";
-    const progressBarId = "reading-progress-bar";
     const mainContent = document.getElementById("main-content");
     const copyButtonLabel = mainContent?.dataset.copyLabel ?? "Copy";
     const copiedButtonLabel = mainContent?.dataset.copiedLabel ?? "Copied";
     const stateKey = "__astroPaperPostPage";
     const state = window[stateKey] ?? (window[stateKey] = {});
-
-    function ensureProgressBar() {
-      for (const staleContainer of document.querySelectorAll(
-        ".progress-container"
-      )) {
-        if (staleContainer.id !== progressContainerId) {
-          staleContainer.remove();
-        }
-      }
-
-      let progressContainer = document.getElementById(progressContainerId);
-      let progressBar = document.getElementById(progressBarId);
-
-      if (!progressContainer || !progressBar) {
-        progressContainer = document.createElement("div");
-        progressContainer.id = progressContainerId;
-        progressContainer.className =
-          "progress-container fixed top-0 z-10 h-1 w-full bg-background";
-
-        progressBar = document.createElement("div");
-        progressBar.id = progressBarId;
-        progressBar.className = "progress-bar h-1 w-0 bg-accent";
-
-        progressContainer.appendChild(progressBar);
-        document.body.appendChild(progressContainer);
-      }
-
-      return progressBar;
-    }
-
-    function updateScrollProgress() {
-      const progressBar = ensureProgressBar();
-      const winScroll =
-        document.body.scrollTop || document.documentElement.scrollTop;
-      const height =
-        document.documentElement.scrollHeight -
-        document.documentElement.clientHeight;
-      const scrolled = height > 0 ? (winScroll / height) * 100 : 0;
-      progressBar.style.width = `${scrolled}%`;
-    }
-
-    function bindScrollProgress() {
-      if (state.scrollHandler) {
-        document.removeEventListener("scroll", state.scrollHandler);
-      }
-
-      state.scrollHandler = updateScrollProgress;
-      document.addEventListener("scroll", state.scrollHandler, {
-        passive: true,
-      });
-      updateScrollProgress();
-    }
-
-    function addHeadingLinks() {
-      const headings = document.querySelectorAll("h2, h3, h4, h5, h6");
-
-      for (const heading of headings) {
-        if (!heading.id || heading.querySelector(".heading-link")) {
-          continue;
-        }
-
-        heading.classList.add("group");
-
-        const link = document.createElement("a");
-        link.className =
-          "heading-link ms-2 no-underline opacity-75 md:opacity-0 md:group-hover:opacity-100 md:focus:opacity-100";
-        link.href = `#${heading.id}`;
-
-        const span = document.createElement("span");
-        span.ariaHidden = "true";
-        span.innerText = "#";
-        link.appendChild(span);
-        heading.appendChild(link);
-      }
-    }
 
     async function copyCode(block, button) {
       const code = block.querySelector("code");
@@ -294,9 +150,6 @@ const { Content, headings } = await render(post);
       document.addEventListener("astro:after-swap", state.afterSwapHandler);
     }
 
-    ensureProgressBar();
-    bindScrollProgress();
-    addHeadingLinks();
     attachCopyButtons();
     bindAfterSwapScrollReset();
   })();

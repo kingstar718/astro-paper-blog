@@ -1,13 +1,13 @@
 ---
 import type { Page } from "astro";
-import type { CollectionEntry } from "astro:content";
 import IconArrowLeft from "@/assets/icons/IconArrowLeft.svg";
 import IconArrowRight from "@/assets/icons/IconArrowRight.svg";
 import LinkButton from "./LinkButton.astro";
 import { useTranslations } from "@/i18n";
 
+// 文章、短文都会用到，条目类型不做限定
 type Props = {
-  page: Page<CollectionEntry<"posts">>;
+  page: Page<unknown>;
 };
 
 const { page } = Astro.props;
