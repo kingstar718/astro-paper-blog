@@ -1,26 +1,68 @@
 ---
-// 短文缩略图的展开/收起。放在渲染短文的页面上（首页、短文列表页）。
+// 短文里的图做成画廊。放在渲染短文的页面上（首页、短文列表页）。
 //
-// 就地展开，不做弹层：短文本身是内联在时间线里的，弹一个覆盖全屏的层
-// 打断感太强；点开原地变大、再点收回，跟阅读的节奏一致。
+// markdown 只能直出一串 <img>，画廊需要一个额外的大图元素，光靠 CSS 搭不出来，
+// 所以在运行时把结构补上：大图插到缩略图条前面（CSS 里 order-first + w-full），
+// 缩略图退化成选择器，点哪张大图就换哪张。默认选中第一张。
 //
-// 尺寸全部交给 CSS（见 typography.css 的 .note-thumbs），脚本只切一个类。
-// 展开后元素变宽，浏览器会自己从 srcset 里换更大的一档，不用手动挑。
+// 不做弹层：短文本身内联在时间线里，覆盖全屏的层打断感太强。
 //
-// 渐进增强：脚本没跑，缩略图照常显示，只是点不开。
+// 渐进增强：脚本没跑，缩略图照常显示，只是没有大图、点了没反应。
 ---
 
 <script is:inline data-astro-rerun>
   (() => {
-    const stateKey = "__astroPaperNoteImageZoom";
-    if (window[stateKey]) return;
-    window[stateKey] = true;
+    const buildGallery = paragraph => {
+      // 已经建过就跳过：客户端路由回退到缓存页面时这里会重复触发
+      if (paragraph.querySelector(".note-preview")) return;
 
-    // 委托挂在 document 上：短文是分页渲染的，逐图绑定既啰嗦，
-    // 客户端路由切页后还要重绑。
-    document.addEventListener("click", event => {
-      const image = event.target.closest(".note-thumbs img");
-      if (image) image.classList.toggle("is-expanded");
-    });
+      const thumbnails = [...paragraph.querySelectorAll(":scope > img")];
+      if (thumbnails.length === 0) return;
+
+      const preview = document.createElement("span");
+      preview.className = "note-preview";
+      const previewImage = document.createElement("img");
+      preview.appendChild(previewImage);
+      paragraph.prepend(preview);
+
+      // 单图时缩略图条是多余的，藏掉，只留大图
+      if (thumbnails.length === 1) paragraph.classList.add("is-single");
+
+      const select = thumbnail => {
+        for (const name of [
+          "src",
+          "srcset",
+          "sizes",
+          "width",
+          "height",
+          "alt",
+        ]) {
+          const value = thumbnail.getAttribute(name);
+          if (value === null) previewImage.removeAttribute(name);
+          else previewImage.setAttribute(name, value);
+        }
+        for (const item of thumbnails) {
+          item.classList.toggle("is-active", item === thumbnail);
+        }
+      };
+
+      for (const thumbnail of thumbnails) {
+        thumbnail.addEventListener("click", () => select(thumbnail));
+      }
+
+      select(thumbnails[0]);
+    };
+
+    const buildAll = () =>
+      document.querySelectorAll(".note-thumbs p").forEach(buildGallery);
+
+    buildAll();
+
+    // 监听只挂一次；buildAll 本身幂等，切页后重跑即可
+    const stateKey = "__astroPaperNoteGallery";
+    if (!window[stateKey]) {
+      window[stateKey] = true;
+      document.addEventListener("astro:after-swap", buildAll);
+    }
   })();
 </script>

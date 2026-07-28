@@ -113,9 +113,11 @@
     }
   }
 
-  /* 短文在时间线里是内联展开的，满宽的图会顶掉半屏，所以只出小缩略图，
-     点击就地放大、再点收回（交互见 NoteImageZoom.astro）。
-     方形裁切是为了多图并排时齐整；文章详情页不加这个类，图仍然满宽。
+  /* 短文的图做成画廊：大图常驻在文字与缩略图条之间，缩略图是选择器。
+     满宽的图会顶掉半屏，所以列表里只给一张大图 + 一排 80px 的方形缩略图。
+     结构由 NoteImageZoom.astro 在运行时搭出来（markdown 只能直出 <img>）。
+     文章详情页不加这个类，图仍然满宽。
+
      注意这一块必须在 .app-prose 之外——写进去会把后面的 prose 规则一起
      圈进短文作用域，文章页的代码、表格、引用块会集体失去样式。 */
   .note-thumbs {
@@ -123,15 +125,30 @@
       @apply flex flex-wrap gap-2;
     }
 
-    img {
-      @apply h-20 w-20 flex-none cursor-zoom-in object-cover;
+    /* 缩略图：markdown 直出的 <img> 就是 <p> 的直接子元素。
+       脚本没跑时它们就是全部内容，只是没有大图，仍然看得见。 */
+    p > img {
+      @apply h-20 w-20 flex-none cursor-pointer object-cover;
       margin: 0;
     }
 
-    /* 展开态：占满短文列宽、高度仍封在 70vh，并独占一行。
-       元素变宽后浏览器会自己从 srcset 换更大的一档。 */
-    img.is-expanded {
-      @apply h-auto max-h-[70vh] w-full cursor-zoom-out object-contain;
+    p > img.is-active {
+      @apply outline-accent outline-2 outline-offset-2;
+    }
+
+    /* 脚本插入的大图：order-first 让它排在缩略图条上方，w-full 独占一行 */
+    .note-preview {
+      @apply order-first w-full;
+    }
+
+    .note-preview img {
+      @apply h-auto max-h-[70vh] w-full object-contain;
+      margin: 0;
+    }
+
+    /* 只有一张图时，缩略图条没有意义 */
+    p.is-single > img {
+      @apply hidden;
     }
   }
 
