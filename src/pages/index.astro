@@ -5,8 +5,8 @@ import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import Timeline from "@/components/Timeline.astro";
-import TimelineItem from "@/components/TimelineItem.astro";
 import PostTimelineItem from "@/components/PostTimelineItem.astro";
+import NoteTimelineItem from "@/components/NoteTimelineItem.astro";
 import { getSortedPosts } from "@/utils/getSortedPosts";
 import { useTranslations } from "@/i18n";
 import config from "@/config";
@@ -68,15 +68,9 @@ const items: TimelineItem[] = [
             item.kind === "post" ? (
               <PostTimelineItem post={item.post} />
             ) : (
-              <TimelineItem
-                kind="note"
-                pubDatetime={item.note.data.pubDatetime}
-              >
-                {/* 段落间距收紧，并去掉首尾外边距，避免和条目间距叠加 */}
-                <div class="app-prose mt-2 max-w-none [&_p]:my-[0.45em] [&>:first-child]:mt-0 [&>:last-child]:mb-0">
-                  <item.Content />
-                </div>
-              </TimelineItem>
+              <NoteTimelineItem pubDatetime={item.note.data.pubDatetime}>
+                <item.Content />
+              </NoteTimelineItem>
             )
           )
         }
