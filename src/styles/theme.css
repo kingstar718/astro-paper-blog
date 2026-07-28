@@ -7,6 +7,7 @@
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
+  --color-code-background: var(--code-background);
   --font-app:
     "Noto Serif Variable", "Noto Serif SC Variable", "Songti SC", "STSong",
     "Source Han Serif SC", "Noto Serif CJK SC", "SimSun", serif;
@@ -16,7 +17,9 @@
   --font-mono: var(--font-code);
 }
 
-/* 页面主色板。代码块（shiki）配色在 astro.config.ts 的 shikiConfig。 */
+/* 页面主色板。代码块的语法高亮配色在 astro.config.ts 的 shikiConfig。 */
+/* 代码块底色不用 shiki 主题自带的（纯白 / 纯黑），它们跟纸感的页面底色对不上。
+   这里单独给一个只比页面底色深一档（暗色则浅一档）的值：能从正文里分出来，又不割裂。 */
 /* Light theme values */
 :root,
 [data-theme="light"] {
@@ -27,6 +30,7 @@
   --muted: #ebe6de;
   --muted-foreground: #5f5a52;
   --border: #dbd3c6;
+  --code-background: #f4f0e8;
 }
 
 /* Dark theme values */
@@ -38,4 +42,5 @@
   --muted: #33302b;
   --muted-foreground: #a9a49a;
   --border: #423d35;
+  --code-background: #272521;
 }

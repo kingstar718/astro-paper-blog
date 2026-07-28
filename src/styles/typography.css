@@ -92,8 +92,12 @@
       font-family: var(--font-code);
     }
 
+    /* 代码块里的 code 要把行内代码那套完全卸掉。
+       mx-0 尤其不能少：上面给行内代码留了 0.15em 左右外边距，
+       而这里 flex-basis 已经是 100%，再带外边距就恒定超出容器 0.3em，
+       结果是不管代码多短，底部都挂着一条横向滚动条。 */
     .astro-code code {
-      @apply flex-[1_0_100%] bg-inherit p-0;
+      @apply mx-0 flex-[1_0_100%] bg-inherit p-0 font-normal;
     }
 
     /* prose 默认给引用块加斜体，中文没有真正的意大利体，去掉 */
@@ -115,13 +119,18 @@
   }
 
   /* ===== Code Blocks & Syntax Highlighting ===== */
+  /* 底色统一走 --code-background，不用 shiki 主题的 --shiki-*-bg；
+     前景色仍逐 span 取主题值，语法高亮不受影响。 */
   .astro-code {
-    @apply outline-border flex border bg-(--shiki-light-bg) text-(--shiki-light) [&_span]:text-(--shiki-light);
+    @apply outline-border bg-code-background flex border text-(--shiki-light) [&_span]:text-(--shiki-light);
     font-family: var(--font-code);
+    /* 真需要横向滚动时才出现，且用细条：默认那条又高又粗，压在代码块下边缘很重 */
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
   }
 
   html[data-theme="dark"] .astro-code {
-    @apply bg-(--shiki-dark-bg) text-(--shiki-dark) [&_span]:text-(--shiki-dark);
+    @apply text-(--shiki-dark) [&_span]:text-(--shiki-dark);
   }
 
   /* Styles for Shiki transformers */

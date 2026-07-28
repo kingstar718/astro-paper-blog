@@ -21,9 +21,12 @@ export default defineConfig({
     },
   },
   markdown: {
-    // 代码块配色。页面主色板见 src/styles/theme.css，代码块样式见 src/styles/typography.css（.astro-code）。
+    // 代码块的语法高亮配色。vitesse 低饱和、偏暖，跟正文的纸感底色是一路的；
+    // 换掉原来的 min-light/min-dark——那两个主题的紫、亮蓝、橙饱和度太高，在长段中文里很跳。
+    // 底色不取主题自带的，改用 --code-background，见 src/styles/theme.css。
+    // 代码块样式见 src/styles/typography.css（.astro-code）。
     shikiConfig: {
-      themes: { light: "min-light", dark: "min-dark" },
+      themes: { light: "vitesse-light", dark: "vitesse-dark" },
       defaultColor: false,
       wrap: false,
       transformers: [
