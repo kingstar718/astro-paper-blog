@@ -151,7 +151,29 @@ const { Content, headings } = await render(post);
       document.addEventListener("astro:after-swap", state.afterSwapHandler);
     }
 
+    // 元信息行里的折叠块（目录、更新记录）。没有用 <details>：
+    // 那样按钮和面板必须是父子，面板整行展开时按钮会被挤到下一行。
+    // 状态只存在 aria-expanded 上，箭头的旋转也读它，样式和无障碍同源。
+    function bindDisclosures() {
+      for (const button of document.querySelectorAll("[data-disclosure]")) {
+        if (button.dataset.bound) continue;
+        button.dataset.bound = "1";
+
+        button.addEventListener("click", () => {
+          const panel = document.getElementById(
+            button.getAttribute("aria-controls")
+          );
+          if (!panel) return;
+
+          const expanded = button.getAttribute("aria-expanded") === "true";
+          button.setAttribute("aria-expanded", String(!expanded));
+          panel.hidden = expanded;
+        });
+      }
+    }
+
     attachCopyButtons();
+    bindDisclosures();
     bindAfterSwapScrollReset();
   })();
 </script>

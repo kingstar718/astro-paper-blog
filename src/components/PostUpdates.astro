@@ -25,23 +25,37 @@ const format = (value: Date) =>
 
 // 在脚本里拼好：写成 JSX 表达式的话，数字和量词之间的空格会被换行吃掉
 const label = `${t.post.updates.title}（${updates.length} ${t.post.updates.unit}）`;
+const panelId = "post-updates-panel";
 ---
 
 {
-  /* open:w-full：收起时和日期挤在同一行，展开时独占一行，
-    列表才不会被压在触发器那一格里。见 index.astro */
+  /*
+  没用 <details>：它的按钮和面板必须是父子，塞进元信息行后，
+  面板要整行展开就得让整个 <details> 变成整行宽，按钮会跟着换行掉到第二行。
+  拆成按钮 + 面板两个兄弟元素，外层 display:contents 让它们各自成为
+  meta-row 的 flex 项：按钮留在行里不动，面板 order-1 + w-full 另起一整行。
+  （contents 只能用在这种普通容器上，用在 <details> 上会让收起态的面板
+  仍然参与布局。）
+*/
 }
-<details class="group text-sm open:w-full" data-pagefind-ignore>
-  {/* list-none 去掉浏览器默认的三角，webkit 要额外关掉自己那个伪元素 */}
-  <summary
-    class="text-muted-foreground hover:text-foreground focus-visible:outline-accent flex w-fit cursor-pointer list-none items-center gap-1.5 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dashed [&::-webkit-details-marker]:hidden"
+<div class="contents" data-pagefind-ignore>
+  <button
+    type="button"
+    class="text-muted-foreground hover:text-foreground focus-visible:outline-accent group flex cursor-pointer items-center gap-1.5 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dashed"
+    data-disclosure
+    aria-expanded="false"
+    aria-controls={panelId}
   >
     <DisclosureMarker />
     {label}
-  </summary>
+  </button>
 
   {/* 竖线呼应站点的时间线；每条内部竖向堆叠，窄屏不会被挤成表格那样 */}
-  <ol class="border-border mt-2 space-y-5 border-s ps-3">
+  <ol
+    id={panelId}
+    hidden
+    class="border-border order-1 mt-1 w-full space-y-5 border-s ps-3 text-sm"
+  >
     {
       updates.map(update => (
         <li>
@@ -57,4 +71,4 @@ const label = `${t.post.updates.title}（${updates.length} ${t.post.updates.unit
       ))
     }
   </ol>
-</details>
+</div>
