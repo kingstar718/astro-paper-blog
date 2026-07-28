@@ -12,7 +12,9 @@ const { kind, pubDatetime } = Astro.props;
 ---
 
 <article class="relative pb-6 last:pb-0">
-  {/* 圆点与竖线同轴：左移 = 容器内边距 + 边框宽度的一半 + 圆点半径 */}
+  {
+    /* 圆点与竖线同轴：左移 = 容器内边距(26) − 竖线半宽(1) + 圆点半径(4) = 29px */
+  }
   <span
     aria-hidden="true"
     class:list={[

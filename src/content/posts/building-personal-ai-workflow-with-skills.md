@@ -4,8 +4,12 @@ title: 用 Claude Code Skills 打造个人 AI 工作流
 featured: false
 draft: false
 aiGenerated: true
-description: 介绍 my-skills 项目的设计思路：如何用 SKILL.md 将 git 提交规范、博客写作流程和终端状态栏固化为可复用的 AI 指令，以及安全优先、可审计、跨平台的设计原则。
+description: 用 SKILL.md 把提交规范、写作流程和状态栏固化成可复用的 AI 指令。
 updates:
+  - datetime: "2026-07-28 15:50"
+    action: 修改
+    note: "精简 description 至一行；正文另有三处「文末更新记录」的说法改为 updates；去掉重复的 AI 提示行"
+    agent: "Claude Code 2.1.220 / claude-opus-5"
   - datetime: "2026-07-28 15:43"
     action: 修改
     note: "更新记录一节改写为三段式演进，示例换成 frontmatter 的 updates 数组；修正流程里过时的 UTC 时间和 <details> 说法"
@@ -85,7 +89,7 @@ Agent 版本和模型名按当前运行环境自动探测，会话内缓存复�
 
 ### my-blog-build：把"记得"写进规范
 
-写博客文章看起来简单，但每次都有七八个细节容易遗漏：日期更新了吗？frontmatter 有没有混进 schema 已经不认的字段？文末的更新记录加了吗？
+写博客文章看起来简单，但每次都有七八个细节容易遗漏：日期更新了吗？frontmatter 有没有混进 schema 已经不认的字段？更新记录加了吗？
 
 这个 skill 的设计思路是**把"记得"全部写死**——做成检查清单，AI 逐项执行，用户不需要提醒。
 
@@ -147,18 +151,16 @@ Claude Opus 4.8 | interview-wiki | main | ▓▓▓▓░░░░░░ 23k/1m 
 
 **规范写死，不靠记忆**。my-blog-build 把 frontmatter 的每个字段、写作约定、更新记录的格式都写成模板。AI 不需要"理解"规范，只需要"遵循"规范——这比口头交代可靠得多，也避免了"这次记得说，下次忘了"的问题。
 
-**可审计**。每次 AI 操作都留下可追溯的记录：commit message 中的 `AI-Generated-By`、文章底部的更新历史表。人和 AI 的贡献边界清晰，回头翻 git log 或文章源文件时不会困惑"这段是谁写的、什么时候改的"。
+**可审计**。每次 AI 操作都留下可追溯的记录：commit message 中的 `AI-Generated-By`、文章的 `updates` 记录。人和 AI 的贡献边界清晰，回头翻 git log 或文章源文件时不会困惑"这段是谁写的、什么时候改的"。
 
 ## 实际效果
 
 现在日常开发的体验变化很具体。
 
-写博客文章时，不再需要交代 frontmatter 格式、写作约定、更新记录的写法。AI 自动按 my-blog-build 的检查清单逐项执行，文末追加带时间戳的更新记录。我只需要确认内容，然后说"推送"。
+写博客文章时，不再需要交代 frontmatter 格式、写作约定、更新记录的写法。AI 自动按 my-blog-build 的检查清单逐项执行，并追加一条带时间戳的更新记录。我只需要确认内容，然后说"推送"。
 
 提交代码时，AI 生成中文 Conventional Commits、标注 AI 归属、逐文件暂存，不会把无关改动混进提交。commit message 的格式和内容不再需要每次纠正。
 
 状态栏让上下文用量始终可见，超出阈值前就能感知，不需要刻意去查。
 
 这些看起来都是小事，但高频出现时就不再是小事。把每次都要口头交代的规范固化成 Skill，节省的不是几分钟，是持续分散的注意力。
-
-> 本文由 Claude Code 辅助生成。

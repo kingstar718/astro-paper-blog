@@ -4,8 +4,12 @@ title: Claude Code 进阶：Skill 与 Subagent 的分工与实践
 featured: false
 draft: false
 aiGenerated: true
-description: Claude Code 的 Skill 和 Subagent 都能把重复工作固化，但解决的问题不同——Skill 省重复，Subagent 省上下文。本文整理两者的必备组成、frontmatter 规范、最佳实践与反模式，并给出何时该用哪个的判断依据。
+description: Skill 省重复，Subagent 省上下文：两者的分工、规范与反模式。
 updates:
+  - datetime: "2026-07-28 15:50"
+    action: 修改
+    note: "精简 description 至一行；去掉重复的 AI 提示行"
+    agent: "Claude Code 2.1.220 / claude-opus-5"
   - datetime: "2026-07-07 18:33"
     action: 创建
     note: "初次生成全文"
@@ -187,5 +191,3 @@ tools: Read, Grep, Glob, Write
 Skill 把"同一套规矩"固化为文件，靠 `description` 在合适场景被自动加载，核心是渐进式披露——`SKILL.md` 当目录，细节丢 `references/`，脚本丢 `scripts/`。Subagent 把"会产生大量输出的边活"丢进独立上下文，只把摘要收回主对话，核心是专精 + 最小权限。
 
 两者不是二选一，而是配合：用 Skill 沉淀规范，用 Subagent 隔离脏活。把 `description` 写好，是这两者共同的最关键一步。
-
-> 本文由 Claude Code 辅助生成。

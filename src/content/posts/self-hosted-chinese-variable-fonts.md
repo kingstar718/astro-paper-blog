@@ -4,8 +4,12 @@ title: 中文网站自托管变量字体方案：unicode-range 分包实战
 featured: false
 draft: false
 aiGenerated: true
-description: 以 astro-paper-blog 和 interview-wiki 两个项目为例，详细介绍如何用 Noto 变量字体 + unicode-range 分包实现零外部请求、按需加载的中文字体方案，并与其他方案做量化对比。
+description: Noto 变量字体 + unicode-range 分包：零外部请求，按需加载。
 updates:
+  - datetime: "2026-07-28 15:50"
+    action: 修改
+    note: "精简 description 至一行；去掉重复的 AI 提示行"
+    agent: "Claude Code 2.1.220 / claude-opus-5"
   - datetime: "2026-07-07 17:23"
     action: 创建
     note: "初次生成全文"
@@ -351,5 +355,3 @@ unicode-range 分包用现成的 `@fontsource` 产物，新增文章零维护，
 4. 将 `font-family` 替换为包含 Noto Variable 的字体栈
 5. 移除 Google Fonts 的 `<link>` 或 `@import`
 6. 构建并验证：Network 面板中应只有 2-5 个 woff2 请求，总量 < 1 MB
-
-> 本文由 Claude Code 辅助生成。

@@ -4,8 +4,12 @@ title: 一次以减法为主的博客改造：时间线、去装饰与中文排�
 featured: false
 draft: false
 aiGenerated: true
-description: 把首页、文章列表、短文列表统一成一条时间线，删掉标签、返回按钮、阅读进度条等六项功能，并按中文长文阅读的要求重做了配色和排版。记录每个决定背后的数据和理由。
+description: 三个列表页统一成一条时间线，删掉六项功能，排版按中文长文重做。
 updates:
+  - datetime: "2026-07-28 15:50"
+    action: 修改
+    note: "精简 description 至一行"
+    agent: "Claude Code 2.1.220 / claude-opus-5"
   - datetime: "2026-07-27 18:34"
     action: 创建
     note: "初次生成全文"

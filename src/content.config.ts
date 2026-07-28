@@ -56,7 +56,11 @@ const posts = defineCollection({
     title: z.string(),
     featured: z.boolean().optional(),
     draft: z.boolean().optional(),
-    description: z.string(),
+    // 时间线上每条只给一行：超过 45 字在 768px 的正文宽度里就会折行，
+    // 几篇叠在一起首页就糊成一片。写不下说明还没提炼到位。
+    description: z
+      .string()
+      .max(45, "description 控制在 45 字以内，时间线上只占一行"),
     canonicalURL: z.string().optional(),
     // 正文由 AI 辅助生成。标记只渲染在标题旁边，不写进 title 字符串，
     // 因此 <title>、RSS 标题和搜索索引都不受影响。

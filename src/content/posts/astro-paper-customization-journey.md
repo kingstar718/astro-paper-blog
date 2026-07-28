@@ -4,8 +4,12 @@ title: AstroPaper 博客改造日志
 featured: false
 draft: false
 aiGenerated: true
-description: 持续记录从 AstroPaper 模板出发，将博客一步步打磨成顺手的中文个人站点的过程。
+description: 从 AstroPaper 模板出发，把博客打磨成顺手的中文站点。
 updates:
+  - datetime: "2026-07-28 15:50"
+    action: 修改
+    note: "精简 description 至一行"
+    agent: "Claude Code 2.1.220 / claude-opus-5"
   - datetime: "2026-07-28 11:29"
     action: 修改
     note: "追加 2026-07-28 一节：撤掉空转的 remark 管线、清理上轮重构残留、dayjs 语言收进 i18n"
