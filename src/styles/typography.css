@@ -63,8 +63,21 @@
       @apply border-border;
     }
 
+    /* 高度必须封顶：手机竖构图的照片按原比例能占满整屏，
+       在时间线里内联展开时尤其糟。w-auto 让浏览器按 max-h 反推宽度，
+       宽高比不会被压扁（图片自带 width/height，由 astro:assets 注入）。 */
     img {
-      @apply border-border mx-auto border;
+      @apply border-border mx-auto max-h-[70vh] w-auto rounded-md border;
+    }
+
+    /* 同一段里连着写的多张图并排，避免竖着堆成一长条。
+       markdown 中图片之间不空行才会落进同一个 <p>。 */
+    p:has(> img + img) {
+      @apply flex flex-wrap justify-center gap-2;
+
+      img {
+        @apply min-w-0 flex-1;
+      }
     }
 
     figcaption {
