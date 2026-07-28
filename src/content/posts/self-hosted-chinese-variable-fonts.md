@@ -1,5 +1,5 @@
 ---
-pubDatetime: 2026-07-07T09:23:22Z
+pubDatetime: "2026-07-07 17:23"
 title: 中文网站自托管变量字体方案：unicode-range 分包实战
 featured: false
 draft: false

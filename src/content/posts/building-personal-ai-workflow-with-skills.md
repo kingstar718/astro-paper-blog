@@ -1,5 +1,5 @@
 ---
-pubDatetime: 2026-07-07T09:33:56Z
+pubDatetime: "2026-07-07 17:33"
 title: 用 Claude Code Skills 打造个人 AI 工作流
 featured: false
 draft: false

@@ -1,5 +1,5 @@
 ---
-pubDatetime: 2026-07-28T03:29:06Z
+pubDatetime: "2026-07-28 11:29"
 title: AstroPaper 博客改造日志
 featured: false
 draft: false

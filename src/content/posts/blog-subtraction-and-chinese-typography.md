@@ -1,5 +1,5 @@
 ---
-pubDatetime: 2026-07-27T10:34:45Z
+pubDatetime: "2026-07-27 18:34"
 title: 一次以减法为主的博客改造：时间线、去装饰与中文排版
 featured: false
 draft: false
