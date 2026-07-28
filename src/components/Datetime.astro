@@ -2,7 +2,10 @@
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
+// dayjs 的 locale 需要静态引入才会注册；"en" 是内置的，无需 import。
+// 语言名由 i18n 的 dateLocale 决定，这里只负责把用到的包挂上。
 import "dayjs/locale/zh-cn";
+import { useTranslations } from "@/i18n";
 import config from "@/config";
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -26,13 +29,15 @@ const {
   dateFormat = "YYYY-MM-DD",
 } = Astro.props;
 
+const t = useTranslations(Astro.currentLocale ?? config.site.lang);
+
 const isModified = modDatetime && modDatetime > pubDatetime;
 
 const datetime = dayjs(isModified ? modDatetime : pubDatetime).tz(
   postTimezone ?? config.site.timezone
 );
 
-const date = datetime.locale("zh-cn").format(dateFormat);
+const date = datetime.locale(t.dateLocale).format(dateFormat);
 ---
 
 <div class:list={["text-muted-foreground flex items-center", className]}>

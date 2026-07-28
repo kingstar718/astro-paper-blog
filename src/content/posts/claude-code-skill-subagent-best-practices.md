@@ -1,5 +1,4 @@
 ---
-author: kingstar718
 pubDatetime: 2026-07-07T10:33:32Z
 title: Claude Code 进阶：Skill 与 Subagent 的分工与实践
 featured: false

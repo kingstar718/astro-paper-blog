@@ -1,14 +1,12 @@
 import { defineCollection } from "astro:content";
 import { z } from "astro/zod";
 import { glob } from "astro/loaders";
-import config from "@/config";
 
 export const BLOG_PATH = "src/content/posts";
 
 const posts = defineCollection({
   loader: glob({ pattern: "**/[^_]*.{md,mdx}", base: `./${BLOG_PATH}` }),
   schema: z.object({
-    author: z.string().default(config.site.author),
     pubDatetime: z.date(),
     modDatetime: z.date().optional().nullable(),
     title: z.string(),
@@ -29,11 +27,10 @@ const pages = defineCollection({
   }),
 });
 
-// 短文：标题可选、正文一两段，直接在列表里展开，不单独生成详情页
+// 短文：正文一两段，直接在列表里展开，不单独生成详情页，因此没有标题
 const notes = defineCollection({
   loader: glob({ pattern: "**/[^_]*.{md,mdx}", base: "./src/content/notes" }),
   schema: z.object({
-    title: z.string().optional(),
     pubDatetime: z.date(),
     modDatetime: z.date().optional().nullable(),
     draft: z.boolean().optional(),

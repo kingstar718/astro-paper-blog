@@ -1,15 +1,12 @@
 ---
+// 列表页、关于页、搜索页的正文容器。标题不在这里出，列表页靠时间线本身表意。
 type Props = {
-  pageTitle?: string | [string, string];
-  pageDesc?: string;
   class?: string;
 };
 
-const { pageTitle, pageDesc, class: className } = Astro.props;
+const { class: className } = Astro.props;
 ---
 
 <main id="main-content" class:list={["app-layout pb-4", className]}>
-  {pageTitle && <h1 class="text-2xl font-semibold sm:text-3xl">{pageTitle}</h1>}
-  {pageDesc && <p class="mt-2 mb-6 italic">{pageDesc}</p>}
   <slot />
 </main>

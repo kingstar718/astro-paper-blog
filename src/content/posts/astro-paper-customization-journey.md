@@ -1,7 +1,6 @@
 ---
-author: kingstar718
 pubDatetime: 2026-05-25T00:00:00Z
-modDatetime: 2026-07-21T07:58:21Z
+modDatetime: 2026-07-28T03:29:06Z
 title: AstroPaper 博客改造日志
 featured: false
 draft: false
@@ -11,6 +10,34 @@ description: 持续记录从 AstroPaper 模板出发，将博客一步步打磨�
 基于 [AstroPaper](https://github.com/satnaing/astro-paper) 模板搭建了这个博客。AstroPaper 是一个极简、响应式、无障碍友好的 Astro 博客主题，支持亮暗模式切换，自带文章系统、标签、归档、搜索、RSS 等功能。
 
 这篇日志持续记录对它的改动，会随提交不断更新，按日期倒序排列。
+
+## 2026-07-28
+
+### 撤掉 remark 管线，回到 Astro 7 原生引擎
+
+7 月 21 日那条写着「本站重度依赖 `remark-toc`、`remark-collapse`」，这个判断是错的。`remark-collapse` 的触发条件配的是标题为 "Table of contents"，`remark-toc` 也只在同名标题下插入列表——而全站没有任何一篇文章写过这种标题，目录早就改由 `TableOfContents.astro` 从 `headings` 生成。两个插件从配上去那天起就是空转的。
+
+于是删掉 `remark-toc`、`remark-collapse`、`@astrojs/markdown-remark` 三个依赖，连同 `src/remark-collapse.d.ts` 和 `markdown.processor` 整段配置，Markdown 渲染交还给 Astro 7 原生的 Satteri 引擎。
+
+换引擎后逐页比对了构建产物，本以为会是零差异，结果发现一处真实变化：直引号的渲染。源文件里写的是 `"理解"`，旧的 remark 管线把前后两个都渲染成右弯引号 `”理解”`，Satteri 则正确配对成 `“理解”`。全站共 37 处成对引号的开引号因此被修正，分布在两篇文章里。另两篇文章虽然也有直引号，但都落在代码块或行内代码中，智能标点本就不处理，所以不受影响。等于顺手修了一个一直没注意到的中文排版 bug。
+
+除此之外的差异只有两类，都不影响渲染：块级标签之间多了换行，以及 `>` 从字面量改为 `&gt;` 转义。代码块内容逐字节比对（连同 shiki 的 span 结构）除实体写法外完全一致。
+
+### 清掉上一轮重构的残留
+
+上次大改删了标签、返回按钮等六项功能，扫尾没做干净。这次按「零引用」标准过了一遍：
+
+- `ResponsiveTable.astro`（上游模板遗留，全仓库含 md/mdx 无引用）、`IconHash.svg`、`IconRss.svg`
+- `Main.astro` 的 `pageTitle` / `pageDesc` 两个 props 及对应 markup——四个调用点全都只传 `class`
+- i18n 的 `nav.home`、`pagination.page`
+- `Header.astro` 里「归档移到页脚」的注释，页脚并没有归档
+- `Layout.astro` 指向 `favicon.ico` 的 `<link>`，而 `public/` 下只有 `favicon.svg`，每次访问白吃一个 404
+
+两个内容 schema 字段也一并收掉：文章的 `author` 五篇都写了但从没被读取过（渲染时用的是 `config.site.author`），短文的 `title` 从不渲染却有一篇写了，写了也看不见。
+
+### dayjs 语言不再硬编码
+
+`Datetime.astro` 里写死的 `.locale("zh-cn")` 挪进 i18n，成为 `dateLocale` 键，zh 是 `zh-cn`、en 是 `en`。目前只有 zh 一条路由，没有实际影响；但 `en.ts` 那套文案一直在维护，哪天真开英文路由，星期几不会再是中文。
 
 ## 2026-07-21
 

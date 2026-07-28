@@ -1,8 +1,8 @@
 import type { UIStrings } from "../types";
 
 export default {
+  dateLocale: "zh-cn",
   nav: {
-    home: "首页",
     posts: "文章",
     notes: "短文",
     about: "关于",
@@ -17,7 +17,6 @@ export default {
   pagination: {
     prev: "上一页",
     next: "下一页",
-    page: "第",
   },
   footer: {
     copyright: "Copyright",

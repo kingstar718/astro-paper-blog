@@ -16,7 +16,6 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@astrojs/markdown-remark": "^7.2.1",
     "@astrojs/mdx": "^7.0.3",
     "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.7.3",
@@ -24,8 +23,6 @@
     "astro": "^7.1.1",
     "dayjs": "^1.11.20",
     "lodash.kebabcase": "^4.1.1",
-    "remark-collapse": "^0.1.2",
-    "remark-toc": "^9.0.0",
     "slugify": "^1.6.9",
     "tailwindcss": "^4.3.3"
   },

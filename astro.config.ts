@@ -2,9 +2,6 @@ import { defineConfig, envField, svgoOptimizer } from "astro/config";
 import tailwindcss from "@tailwindcss/vite";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
-import { unified } from "@astrojs/markdown-remark";
-import remarkToc from "remark-toc";
-import remarkCollapse from "remark-collapse";
 import {
   transformerNotationDiff,
   transformerNotationHighlight,
@@ -24,12 +21,6 @@ export default defineConfig({
     },
   },
   markdown: {
-    processor: unified({
-      remarkPlugins: [
-        remarkToc,
-        [remarkCollapse, { test: "Table of contents" }],
-      ],
-    }),
     // 代码块配色。页面主色板见 src/styles/theme.css，代码块样式见 src/styles/typography.css（.astro-code）。
     shikiConfig: {
       themes: { light: "min-light", dark: "min-dark" },

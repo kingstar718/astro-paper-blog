@@ -1,5 +1,4 @@
 ---
-author: kingstar718
 pubDatetime: 2026-07-27T10:34:45Z
 title: 一次以减法为主的博客改造：时间线、去装饰与中文排版
 featured: false

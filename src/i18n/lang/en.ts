@@ -1,8 +1,8 @@
 import type { UIStrings } from "../types";
 
 export default {
+  dateLocale: "en",
   nav: {
-    home: "Home",
     posts: "Posts",
     notes: "Notes",
     about: "About",
@@ -17,7 +17,6 @@ export default {
   pagination: {
     prev: "Prev",
     next: "Next",
-    page: "Page",
   },
   footer: {
     copyright: "Copyright",

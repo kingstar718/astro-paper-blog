@@ -1,5 +1,4 @@
 ---
-author: kingstar718
 pubDatetime: 2026-07-07T09:23:22Z
 title: 中文网站自托管变量字体方案：unicode-range 分包实战
 featured: false

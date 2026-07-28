@@ -31,7 +31,7 @@ const isActive = (path: string) => {
   return currentPath === path || currentPathArray[0] === pathArray[0];
 };
 
-// 主导航（文字）。首页是文章+短文的统一时间线，文章/短文另有独立列表页；归档移到页脚。
+// 主导航（文字）。首页是文章+短文的统一时间线，文章/短文另有独立列表页。
 const navLinks = [
   { path: "/posts", href: "posts", label: t.nav.posts },
   { path: "/notes", href: "notes", label: t.nav.notes },
