@@ -9,6 +9,7 @@ import Timeline from "@/components/Timeline.astro";
 import PostTimelineItem from "@/components/PostTimelineItem.astro";
 import TimelineStats from "@/components/TimelineStats.astro";
 import Pagination from "@/components/Pagination.astro";
+import ListFooter from "@/components/ListFooter.astro";
 import { postFilter } from "@/utils/postFilter";
 import { getPostsByGroupCondition } from "@/utils/getPostsByGroupCondition";
 import { useTranslations } from "@/i18n";
@@ -53,9 +54,10 @@ const t = useTranslations(locale);
       {page.data.map(post => <PostTimelineItem post={post} />)}
     </Timeline>
 
-    <Pagination page={page} />
-
-    <TimelineStats total={total} unit={t.pages.postsUnit} groups={years} />
+    <ListFooter>
+      <TimelineStats total={total} unit={t.pages.postsUnit} groups={years} />
+      <Pagination page={page} />
+    </ListFooter>
   </Main>
 
   <Footer />

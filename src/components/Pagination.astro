@@ -5,7 +5,8 @@ import IconArrowRight from "@/assets/icons/IconArrowRight.svg";
 import LinkButton from "./LinkButton.astro";
 import { useTranslations } from "@/i18n";
 
-// 文章、短文都会用到，条目类型不做限定
+// 文章、短文都会用到，条目类型不做限定。
+// 不自带字号和颜色，跟着外层的 ListFooter 走，与统计同一套排版。
 type Props = {
   page: Page<unknown>;
 };
@@ -18,20 +19,24 @@ const t = useTranslations(Astro.currentLocale);
 {
   page.lastPage > 1 && (
     <nav
-      class="mt-auto mb-8 flex justify-center gap-4"
+      class="flex items-center gap-3"
       role="navigation"
       aria-label="Pagination Navigation"
     >
+      {/* 与统计各组之间用同一个分隔符 */}
+      <span aria-hidden="true">·</span>
       <LinkButton
         disabled={!page.url.prev}
         href={page.url.prev as string}
         class:list={["select-none", { "opacity-50": !page.url.prev }]}
         aria-label={t.a11y.goToPreviousPage}
       >
-        <IconArrowLeft class="inline-block rtl:rotate-180" />
+        <IconArrowLeft class="inline-block size-4 rtl:rotate-180" />
         {t.pagination.prev}
       </LinkButton>
-      {page.currentPage} / {page.lastPage}
+      <span class="tabular-nums">
+        {page.currentPage} / {page.lastPage}
+      </span>
       <LinkButton
         disabled={!page.url.next}
         href={page.url.next as string}
@@ -39,7 +44,7 @@ const t = useTranslations(Astro.currentLocale);
         aria-label={t.a11y.goToNextPage}
       >
         {t.pagination.next}
-        <IconArrowRight class="inline-block rtl:rotate-180" />
+        <IconArrowRight class="inline-block size-4 rtl:rotate-180" />
       </LinkButton>
     </nav>
   )

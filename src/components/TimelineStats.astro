@@ -1,7 +1,8 @@
 ---
 import { useTranslations } from "@/i18n";
 
-// 列表页尾部的统计行，放在分页所在的位置，避免在顶部打断时间线。
+// 列表页尾部统计。只吐若干 <span>，字号和颜色交给外层的 ListFooter，
+// 这样它能和分页排进同一行、共用同一套排版。
 type Props = {
   /** 条目总数 */
   total: number;
@@ -15,18 +16,14 @@ const { total, unit, groups } = Astro.props;
 const t = useTranslations(Astro.currentLocale);
 ---
 
-<div
-  class="text-muted-foreground mt-10 flex flex-wrap justify-center gap-x-3 gap-y-1 text-sm"
->
-  <span>{t.pages.postsTotal} {total} {unit}</span>
-  {
-    groups.map(([label, count]) => (
-      <span>
-        <span aria-hidden="true" class="me-3">
-          ·
-        </span>
-        {label} {count} {unit}
+<span>{t.pages.postsTotal} {total} {unit}</span>
+{
+  groups.map(([label, count]) => (
+    <span>
+      <span aria-hidden="true" class="me-3">
+        ·
       </span>
-    ))
-  }
-</div>
+      {label} {count} {unit}
+    </span>
+  ))
+}
