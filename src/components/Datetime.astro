@@ -30,7 +30,8 @@ const datetime = dayjs(pubDatetime).tz(config.site.timezone);
 const date = datetime.locale(t.dateLocale).format(DATE_FORMAT);
 ---
 
-<div class:list={["text-muted-foreground flex items-center", className]}>
+{/* faint 而不是 muted-foreground：日期是索引信息，在标题、简介之后 */}
+<div class:list={["text-faint flex items-center", className]}>
   <time
     class:list={["text-sm", { "sm:text-base": size === "lg" }]}
     datetime={datetime.toISOString()}

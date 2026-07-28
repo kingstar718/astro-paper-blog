@@ -44,5 +44,9 @@ const url = getPostUrl(post.id, post.filePath, Astro.currentLocale);
       {title}
     </a>{aiGenerated && <AiBadge />}
   </h2>
-  <p class="mt-1 leading-relaxed">{description}</p>
+  {
+    /* 简介弱于标题：它是指向正文的路牌，不是正文本身。
+      短文不走这里，正文保持全强度——那才是读者要读的内容。 */
+  }
+  <p class="text-muted-foreground mt-1 leading-relaxed">{description}</p>
 </TimelineItem>

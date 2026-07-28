@@ -6,6 +6,7 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
+  --color-faint: var(--faint);
   --color-border: var(--border);
   --color-code-background: var(--code-background);
   --font-app:
@@ -29,6 +30,9 @@
   --accent-foreground: #ffffff;
   --muted: #ebe6de;
   --muted-foreground: #5f5a52;
+  /* 比 muted-foreground 再弱一档。列表里日期属于索引信息，
+     要排在标题、简介之后，三级递减才不糊成一片。 */
+  --faint: #8a8377;
   --border: #dbd3c6;
   --code-background: #f4f0e8;
 }
@@ -41,6 +45,7 @@
   --accent-foreground: #1a1a1a;
   --muted: #33302b;
   --muted-foreground: #a9a49a;
+  --faint: #837d72;
   --border: #423d35;
   --code-background: #272521;
 }
