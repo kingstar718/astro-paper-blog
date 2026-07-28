@@ -19,9 +19,8 @@ export interface UIStrings {
     /** 标题旁 AI 标记的说明文字，作为 tooltip 和无障碍标签使用 */
     aiGenerated: string;
     updates: {
+      /** 折叠按钮的文案，后面直接跟条数：「更新(3)」 */
       title: string;
-      /** 记录条数的量词，渲染成「3 条」/「3 entries」 */
-      unit: string;
     };
   };
   footer: {

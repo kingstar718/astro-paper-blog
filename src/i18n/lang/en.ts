@@ -15,8 +15,7 @@ export default {
     pinTableOfContents: "Pin table of contents",
     aiGenerated: "Written with AI assistance",
     updates: {
-      title: "Update log",
-      unit: "entries",
+      title: "Updates",
     },
   },
   footer: {

@@ -23,8 +23,7 @@ const t = useTranslations(Astro.currentLocale ?? config.site.lang);
 const format = (value: Date) =>
   dayjs(value).tz(config.site.timezone).format("YYYY-MM-DD HH:mm");
 
-// 在脚本里拼好：写成 JSX 表达式的话，数字和量词之间的空格会被换行吃掉
-const label = `${t.post.updates.title}（${updates.length} ${t.post.updates.unit}）`;
+const label = `${t.post.updates.title}(${updates.length})`;
 const panelId = "post-updates-panel";
 ---
 

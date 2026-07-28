@@ -15,8 +15,7 @@ export default {
     pinTableOfContents: "固定目录",
     aiGenerated: "本文由 AI 辅助生成",
     updates: {
-      title: "更新记录",
-      unit: "条",
+      title: "更新",
     },
   },
   footer: {
