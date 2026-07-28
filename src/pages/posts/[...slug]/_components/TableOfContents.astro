@@ -79,14 +79,16 @@ const isSidebar = variant === "sidebar";
         </nav>
       </div>
     ) : (
-      <details class="text-muted-foreground group my-6 xl:hidden">
+      /* open:w-full：收起时和日期挤在同一行，展开时独占一行，
+         面板才不会被压在触发器那一格里。见 index.astro */
+      <details class="text-muted-foreground group open:w-full xl:hidden">
         <summary class="hover:text-accent focus-visible:outline-accent flex cursor-pointer list-none items-center gap-1.5 text-sm font-medium select-none focus-visible:no-underline focus-visible:outline-2 focus-visible:outline-dashed [&::-webkit-details-marker]:hidden">
           <DisclosureMarker />
           {t.post.tableOfContents}
         </summary>
         <nav
           aria-label={t.post.tableOfContents}
-          class="border-border mt-3 border-s ps-3 text-sm"
+          class="border-border mt-2 border-s ps-3 text-sm"
         >
           <ul>
             {toc.map(h => (

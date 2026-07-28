@@ -22,20 +22,26 @@ const t = useTranslations(Astro.currentLocale ?? config.site.lang);
 // 与页面其他日期同一个格式和时区，全站只有这一种写法
 const format = (value: Date) =>
   dayjs(value).tz(config.site.timezone).format("YYYY-MM-DD HH:mm");
+
+// 在脚本里拼好：写成 JSX 表达式的话，数字和量词之间的空格会被换行吃掉
+const label = `${t.post.updates.title}（${updates.length} ${t.post.updates.unit}）`;
 ---
 
-<details class="group mt-16 text-sm" data-pagefind-ignore>
+{
+  /* open:w-full：收起时和日期挤在同一行，展开时独占一行，
+    列表才不会被压在触发器那一格里。见 index.astro */
+}
+<details class="group text-sm open:w-full" data-pagefind-ignore>
   {/* list-none 去掉浏览器默认的三角，webkit 要额外关掉自己那个伪元素 */}
   <summary
     class="text-muted-foreground hover:text-foreground focus-visible:outline-accent flex w-fit cursor-pointer list-none items-center gap-1.5 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dashed [&::-webkit-details-marker]:hidden"
   >
     <DisclosureMarker />
-    {t.post.updates.title}（{updates.length}
-    {t.post.updates.unit}）
+    {label}
   </summary>
 
   {/* 竖线呼应站点的时间线；每条内部竖向堆叠，窄屏不会被挤成表格那样 */}
-  <ol class="border-border ms-1 mt-4 space-y-5 border-s ps-5">
+  <ol class="border-border mt-2 space-y-5 border-s ps-3">
     {
       updates.map(update => (
         <li>

@@ -61,16 +61,20 @@ const { Content, headings } = await render(post);
       {title}{aiGenerated && <AiBadge />}
     </h1>
 
-    <Datetime {pubDatetime} size="lg" class="my-2" />
-
-    <TableOfContents {headings} variant="inline" />
+    {
+      /* 日期、目录、更新记录都是这篇文章的元信息，收起时并排一行。
+        两个折叠块带 open:w-full，展开的那个独占整行，面板不会被挤在一格里。
+        （details 上不能用 display:contents，那样收起态的面板也会参与布局。） */
+    }
+    <div class="my-2 flex flex-wrap items-baseline gap-x-5 gap-y-2">
+      <Datetime {pubDatetime} size="lg" />
+      <TableOfContents {headings} variant="inline" />
+      {updates && updates.length > 0 && <PostUpdates {updates} />}
+    </div>
 
     <article id="article" class:list={["mt-8 w-full", "app-prose max-w-app"]}>
       <Content />
     </article>
-
-    {/* 放在 article 外面：更新记录是元数据，不该套 prose 的正文排版 */}
-    {updates && updates.length > 0 && <PostUpdates {updates} />}
   </main>
   <Footer />
 </PostLayout>
