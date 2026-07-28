@@ -70,30 +70,6 @@
       @apply border-border mx-auto max-h-[70vh] w-auto rounded-md border;
     }
 
-    /* 同一段里连着写的多张图并排，避免竖着堆成一长条。
-       markdown 中图片之间不空行才会落进同一个 <p>。 */
-    p:has(> img + img) {
-      @apply flex flex-wrap justify-center gap-2;
-
-      img {
-        @apply min-w-0 flex-1;
-      }
-    }
-  }
-
-  /* 短文在时间线里是内联展开的，满宽的图会顶掉半屏，所以只出缩略图，
-     点击看原图（交互见 NoteLightbox.astro）。方形裁切是为了多图并排时齐整。
-     文章详情页不加这个类，图仍然满宽——那里是正经阅读，图就该大。 */
-  .note-thumbs {
-    p:has(img) {
-      @apply flex flex-wrap gap-2;
-    }
-
-    img {
-      @apply size-28 flex-none cursor-zoom-in object-cover;
-      margin: 0;
-    }
-
     figcaption {
       @apply opacity-75;
     }
@@ -134,6 +110,28 @@
 
     pre {
       @apply focus-visible:outline-accent focus-visible:border-transparent focus-visible:outline-2 focus-visible:outline-dashed;
+    }
+  }
+
+  /* 短文在时间线里是内联展开的，满宽的图会顶掉半屏，所以只出小缩略图，
+     点击就地放大、再点收回（交互见 NoteImageZoom.astro）。
+     方形裁切是为了多图并排时齐整；文章详情页不加这个类，图仍然满宽。
+     注意这一块必须在 .app-prose 之外——写进去会把后面的 prose 规则一起
+     圈进短文作用域，文章页的代码、表格、引用块会集体失去样式。 */
+  .note-thumbs {
+    p:has(img) {
+      @apply flex flex-wrap gap-2;
+    }
+
+    img {
+      @apply h-20 w-20 flex-none cursor-zoom-in object-cover;
+      margin: 0;
+    }
+
+    /* 展开态：占满短文列宽、高度仍封在 70vh，并独占一行。
+       元素变宽后浏览器会自己从 srcset 换更大的一档。 */
+    img.is-expanded {
+      @apply h-auto max-h-[70vh] w-full cursor-zoom-out object-contain;
     }
   }
 
