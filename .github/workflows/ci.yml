@@ -4,6 +4,11 @@ permissions:
   contents: read
 
 on:
+  # 直推 main 也要校验：手机端发短文不会先在本地构建，
+  # 格式或 schema 出错时这里是唯一能在 CF Pages 部署前后发现问题的地方。
+  push:
+    branches:
+      - main
   pull_request:
     types:
       - opened
