@@ -7,6 +7,7 @@ import Main from "@/components/Main.astro";
 import Footer from "@/components/Footer.astro";
 import Timeline from "@/components/Timeline.astro";
 import NoteTimelineItem from "@/components/NoteTimelineItem.astro";
+import NoteLightbox from "@/components/NoteLightbox.astro";
 import TimelineStats from "@/components/TimelineStats.astro";
 import Pagination from "@/components/Pagination.astro";
 import ListFooter from "@/components/ListFooter.astro";
@@ -74,5 +75,6 @@ const renderedNotes = await Promise.all(
     </ListFooter>
   </Main>
 
+  <NoteLightbox />
   <Footer />
 </Layout>

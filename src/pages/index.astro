@@ -7,6 +7,7 @@ import Footer from "@/components/Footer.astro";
 import Timeline from "@/components/Timeline.astro";
 import PostTimelineItem from "@/components/PostTimelineItem.astro";
 import NoteTimelineItem from "@/components/NoteTimelineItem.astro";
+import NoteLightbox from "@/components/NoteLightbox.astro";
 import { getSortedPosts } from "@/utils/getSortedPosts";
 import { useTranslations } from "@/i18n";
 import config from "@/config";
@@ -88,5 +89,6 @@ const items: TimelineItem[] = [
       </nav>
     </section>
   </main>
+  <NoteLightbox />
   <Footer />
 </Layout>

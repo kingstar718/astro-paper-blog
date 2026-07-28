@@ -79,6 +79,20 @@
         @apply min-w-0 flex-1;
       }
     }
+  }
+
+  /* 短文在时间线里是内联展开的，满宽的图会顶掉半屏，所以只出缩略图，
+     点击看原图（交互见 NoteLightbox.astro）。方形裁切是为了多图并排时齐整。
+     文章详情页不加这个类，图仍然满宽——那里是正经阅读，图就该大。 */
+  .note-thumbs {
+    p:has(img) {
+      @apply flex flex-wrap gap-2;
+    }
+
+    img {
+      @apply size-28 flex-none cursor-zoom-in object-cover;
+      margin: 0;
+    }
 
     figcaption {
       @apply opacity-75;
