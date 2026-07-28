@@ -31,6 +31,21 @@ jobs:
       - name: "☁️ Checkout repository"
         uses: actions/checkout@v4
 
+      # 放在最前面：不装依赖也能跑，几秒出结果。
+      # 手机端发布时文件名一旦混入空格，URL 会被截断、扩展名丢失，
+      # GitHub 照样返回 201 成功，但文件不匹配内容集合的 glob，
+      # 构建静默忽略它——站点上什么都没有。这一步专门抓这种静默失败。
+      - name: "🗂️ 检查内容文件都会被收录"
+        run: |
+          orphans=$(find src/content -type f ! -name '_*' ! -name '*.md' ! -name '*.mdx')
+          if [ -n "$orphans" ]; then
+            echo "::error::以下文件不会被内容集合收录，发布后站点上看不到"
+            echo "$orphans" | sed 's/^/  /'
+            echo "内容集合的 glob 是 **/[^_]*.{md,mdx}：需以 .md/.mdx 结尾，且不以 _ 开头。"
+            exit 1
+          fi
+          echo "内容目录检查通过。"
+
       - name: "📦 Install pnpm"
         uses: pnpm/action-setup@v4
         with:
