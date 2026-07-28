@@ -5,6 +5,11 @@ featured: false
 draft: false
 aiGenerated: true
 description: 以 astro-paper-blog 和 interview-wiki 两个项目为例，详细介绍如何用 Noto 变量字体 + unicode-range 分包实现零外部请求、按需加载的中文字体方案，并与其他方案做量化对比。
+updates:
+  - datetime: "2026-07-07 17:23"
+    action: 创建
+    note: "初次生成全文"
+    agent: "Claude Code 2.1.201 / deepseek-v4-pro[1m]"
 ---
 
 ## 问题
@@ -348,12 +353,3 @@ unicode-range 分包用现成的 `@fontsource` 产物，新增文章零维护，
 6. 构建并验证：Network 面板中应只有 2-5 个 woff2 请求，总量 < 1 MB
 
 > 本文由 Claude Code 辅助生成。
-
-<details>
-<summary>📝 更新记录（2026-07-07 17:23:22）</summary>
-
-| 时间                | 操作 | 说明         | Agent                                     |
-| ------------------- | ---- | ------------ | ----------------------------------------- |
-| 2026-07-07 17:23:22 | 创建 | 初次生成全文 | Claude Code 2.1.201 / deepseek-v4-pro[1m] |
-
-</details>

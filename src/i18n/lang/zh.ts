@@ -14,6 +14,10 @@ export default {
     tableOfContents: "目录",
     pinTableOfContents: "固定目录",
     aiGenerated: "本文由 AI 辅助生成",
+    updates: {
+      title: "更新记录",
+      unit: "条",
+    },
   },
   pagination: {
     prev: "上一页",

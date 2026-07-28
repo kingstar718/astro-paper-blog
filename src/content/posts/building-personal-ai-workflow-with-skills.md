@@ -5,6 +5,15 @@ featured: false
 draft: false
 aiGenerated: true
 description: 介绍 my-skills 项目的设计思路：如何用 SKILL.md 将 git 提交规范、博客写作流程和终端状态栏固化为可复用的 AI 指令，以及安全优先、可审计、跨平台的设计原则。
+updates:
+  - datetime: "2026-07-28 12:14"
+    action: 修改
+    note: "更正已失效的举例：schema 移除 modDatetime、tags 后，相关描述改为当前仍成立的说法"
+    agent: "Claude Code 2.1.220 / claude-opus-5"
+  - datetime: "2026-07-07 17:35"
+    action: 创建
+    note: "初次生成全文"
+    agent: "Claude Code 2.1.201 / deepseek-v4-pro[1m]"
 ---
 
 ## 问题
@@ -147,13 +156,3 @@ Claude Opus 4.8 | interview-wiki | main | ▓▓▓▓░░░░░░ 23k/1m 
 这些看起来都是小事，但高频出现时就不再是小事。把每次都要口头交代的规范固化成 Skill，节省的不是几分钟，是持续分散的注意力。
 
 > 本文由 Claude Code 辅助生成。
-
-<details>
-<summary>📝 更新记录（最近：2026-07-28 12:14:42）</summary>
-
-| 时间                | 操作 | 说明                                                                             | Agent                                     |
-| ------------------- | ---- | -------------------------------------------------------------------------------- | ----------------------------------------- |
-| 2026-07-28 12:14:42 | 修改 | 更正已失效的举例：schema 移除 modDatetime、tags 后，相关描述改为当前仍成立的说法 | Claude Code 2.1.220 / claude-opus-5       |
-| 2026-07-07 17:35:00 | 创建 | 初次生成全文                                                                     | Claude Code 2.1.201 / deepseek-v4-pro[1m] |
-
-</details>

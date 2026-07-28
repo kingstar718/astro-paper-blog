@@ -14,6 +14,10 @@ export default {
     tableOfContents: "Table of Contents",
     pinTableOfContents: "Pin table of contents",
     aiGenerated: "Written with AI assistance",
+    updates: {
+      title: "Update log",
+      unit: "entries",
+    },
   },
   pagination: {
     prev: "Prev",

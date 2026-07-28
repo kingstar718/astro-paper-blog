@@ -5,6 +5,11 @@ featured: false
 draft: false
 aiGenerated: true
 description: Claude Code 的 Skill 和 Subagent 都能把重复工作固化，但解决的问题不同——Skill 省重复，Subagent 省上下文。本文整理两者的必备组成、frontmatter 规范、最佳实践与反模式，并给出何时该用哪个的判断依据。
+updates:
+  - datetime: "2026-07-07 18:33"
+    action: 创建
+    note: "初次生成全文"
+    agent: "Claude Code 2.1.197 / aliyun/glm-5.2[1m]"
 ---
 
 ## 先把结论说在前面
@@ -184,12 +189,3 @@ Skill 把"同一套规矩"固化为文件，靠 `description` 在合适场景被
 两者不是二选一，而是配合：用 Skill 沉淀规范，用 Subagent 隔离脏活。把 `description` 写好，是这两者共同的最关键一步。
 
 > 本文由 Claude Code 辅助生成。
-
-<details>
-<summary>📝 更新记录（2026-07-07 18:33:32）</summary>
-
-| 时间                | 操作 | 说明         | Agent                                    |
-| ------------------- | ---- | ------------ | ---------------------------------------- |
-| 2026-07-07 18:33:32 | 创建 | 初次生成全文 | Claude Code 2.1.197 / aliyun/glm-5.2[1m] |
-
-</details>

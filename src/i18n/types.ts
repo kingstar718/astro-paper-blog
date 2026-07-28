@@ -18,6 +18,11 @@ export interface UIStrings {
     pinTableOfContents: string;
     /** 标题旁 AI 标记的说明文字，作为 tooltip 和无障碍标签使用 */
     aiGenerated: string;
+    updates: {
+      title: string;
+      /** 记录条数的量词，渲染成「3 条」/「3 entries」 */
+      unit: string;
+    };
   };
   pagination: {
     prev: string;

@@ -1,0 +1,17 @@
+---
+// <details> 的展开标记：浏览器默认那个三角接不了主题色，统一换成这个。
+// 用在 <summary> 里，外层 <details> 需要带 group 类，展开时三角才会跟着旋转。
+// summary 自身要 list-none + [&::-webkit-details-marker]:hidden，去掉原生标记。
+---
+
+<svg
+  class="text-accent size-3 shrink-0 transition-transform duration-200 group-open:rotate-90"
+  viewBox="0 0 10 10"
+  fill="currentColor"
+  aria-hidden="true"
+>
+  {
+    /* viewBox 必须是正方形：size-3 会把宽高都设成 12px，非正方的 viewBox 会被拉变形 */
+  }
+  <path d="M3.5 1.5 8.5 5 3.5 8.5z"></path>
+</svg>
