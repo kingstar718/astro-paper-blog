@@ -23,8 +23,8 @@ const t = useTranslations(Astro.currentLocale);
       role="navigation"
       aria-label="Pagination Navigation"
     >
-      {/* 与统计各组之间用同一个分隔符 */}
-      <span aria-hidden="true">·</span>
+      {/* 只留箭头：上一页/下一页的字样和箭头是同一个意思，写两遍是冗余。
+          可读名称仍由 aria-label 提供，读屏不受影响。 */}
       <LinkButton
         disabled={!page.url.prev}
         href={page.url.prev as string}
@@ -32,7 +32,6 @@ const t = useTranslations(Astro.currentLocale);
         aria-label={t.a11y.goToPreviousPage}
       >
         <IconArrowLeft class="inline-block size-4 rtl:rotate-180" />
-        {t.pagination.prev}
       </LinkButton>
       <span class="tabular-nums">
         {page.currentPage} / {page.lastPage}
@@ -43,9 +42,12 @@ const t = useTranslations(Astro.currentLocale);
         class:list={["select-none", { "opacity-50": !page.url.next }]}
         aria-label={t.a11y.goToNextPage}
       >
-        {t.pagination.next}
         <IconArrowRight class="inline-block size-4 rtl:rotate-180" />
       </LinkButton>
+      {/* 分隔符归到末尾：分页排在统计之前，隔开的是它右边的统计 */}
+      <span aria-hidden="true" class="ms-1">
+        ·
+      </span>
     </nav>
   )
 }

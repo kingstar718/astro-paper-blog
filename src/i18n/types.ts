@@ -24,10 +24,6 @@ export interface UIStrings {
       unit: string;
     };
   };
-  pagination: {
-    prev: string;
-    next: string;
-  };
   footer: {
     copyright: string;
     allRightsReserved: string;

@@ -19,10 +19,6 @@ export default {
       unit: "entries",
     },
   },
-  pagination: {
-    prev: "Prev",
-    next: "Next",
-  },
   footer: {
     copyright: "Copyright",
     allRightsReserved: "All rights reserved.",

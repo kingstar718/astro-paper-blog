@@ -13,13 +13,16 @@ export default defineAstroPaperConfig({
     timezone: "Asia/Shanghai",
     dir: "ltr",
   },
+  // perIndex 是首页各取几条，perPage 是列表页每页几条。
+  // 列表页是「翻完整个站」的地方，要明显多于首页那几条摘要。
   posts: {
-    perPage: 4,
+    perPage: 10,
     perIndex: 4,
     scheduledPostMargin: 15 * 60 * 1000,
   },
   notes: {
-    perPage: 10,
+    // 短文在列表里是全文展开的，比文章占竖向空间，所以没给更大
+    perPage: 15,
     perIndex: 4,
   },
   features: {
