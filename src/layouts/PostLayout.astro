@@ -7,20 +7,21 @@ type Props = {
   description?: string;
   canonicalURL?: string;
   pubDatetime?: Date;
-  modDatetime?: Date | null;
 };
 
 const { site } = config;
 
-const { title, description, canonicalURL, pubDatetime, modDatetime } =
-  Astro.props;
+const { title, description, canonicalURL, pubDatetime } = Astro.props;
 
 const structuredData = {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
   headline: title ?? site.title,
-  ...(pubDatetime && { datePublished: pubDatetime.toISOString() }),
-  ...(modDatetime && { dateModified: modDatetime.toISOString() }),
+  // 只有一个日期字段，发布与修改共用，因此 datePublished 与 dateModified 同值
+  ...(pubDatetime && {
+    datePublished: pubDatetime.toISOString(),
+    dateModified: pubDatetime.toISOString(),
+  }),
   author: [
     {
       "@type": "Person",

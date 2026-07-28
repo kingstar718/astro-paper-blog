@@ -7,14 +7,13 @@ export const BLOG_PATH = "src/content/posts";
 const posts = defineCollection({
   loader: glob({ pattern: "**/[^_]*.{md,mdx}", base: `./${BLOG_PATH}` }),
   schema: z.object({
+    /** 内容的唯一日期：发布时写入，后续修改也更新它 */
     pubDatetime: z.date(),
-    modDatetime: z.date().optional().nullable(),
     title: z.string(),
     featured: z.boolean().optional(),
     draft: z.boolean().optional(),
     description: z.string(),
     canonicalURL: z.string().optional(),
-    timezone: z.string().optional(),
   }),
 });
 
@@ -32,9 +31,7 @@ const notes = defineCollection({
   loader: glob({ pattern: "**/[^_]*.{md,mdx}", base: "./src/content/notes" }),
   schema: z.object({
     pubDatetime: z.date(),
-    modDatetime: z.date().optional().nullable(),
     draft: z.boolean().optional(),
-    timezone: z.string().optional(),
   }),
 });
 

@@ -182,8 +182,6 @@ Skill 把"同一套规矩"固化为文件，靠 `description` 在合适场景被
 
 两者不是二选一，而是配合：用 Skill 沉淀规范，用 Subagent 隔离脏活。把 `description` 写好，是这两者共同的最关键一步。
 
----
-
 > 本文由 Claude Code 辅助生成。
 
 <details>

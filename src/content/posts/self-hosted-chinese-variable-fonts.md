@@ -346,8 +346,6 @@ unicode-range 分包用现成的 `@fontsource` 产物，新增文章零维护，
 5. 移除 Google Fonts 的 `<link>` 或 `@import`
 6. 构建并验证：Network 面板中应只有 2-5 个 woff2 请求，总量 < 1 MB
 
----
-
 > 本文由 Claude Code 辅助生成。
 
 <details>

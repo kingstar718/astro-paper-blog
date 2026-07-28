@@ -7,23 +7,14 @@ import { slugifyStr } from "@/utils/slugify";
 // 时间线上的一篇文章：首页和文章列表页共用，保证两处渲染完全一致。
 type Props = {
   post: CollectionEntry<"posts">;
-  /** 类型标签，仅在首页与短文混排时传入 */
-  label?: string;
 };
 
-const { post, label } = Astro.props;
-const { title, description, pubDatetime, modDatetime, timezone, featured } =
-  post.data;
+const { post } = Astro.props;
+const { title, description, pubDatetime, featured } = post.data;
 const url = getPostUrl(post.id, post.filePath, Astro.currentLocale);
 ---
 
-<TimelineItem
-  kind="post"
-  pubDatetime={pubDatetime}
-  modDatetime={modDatetime}
-  timezone={timezone}
-  label={label}
->
+<TimelineItem kind="post" pubDatetime={pubDatetime}>
   <a
     href={url}
     class="hover:text-accent mt-1 inline-block text-lg font-medium decoration-dashed underline-offset-4 hover:underline focus-visible:no-underline focus-visible:underline-offset-0"

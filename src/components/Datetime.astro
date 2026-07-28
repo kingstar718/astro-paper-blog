@@ -10,34 +10,24 @@ import config from "@/config";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
+// 全站唯一的日期格式：精确到分钟。时间线和文章详情页共用，两处粒度保持一致。
+const DATE_FORMAT = "YYYY-MM-DD HH:mm";
+
 type Props = {
   class?: string;
   size?: "sm" | "lg";
+  /** 内容的唯一日期字段；发布与后续修改都更新它 */
   pubDatetime: string | Date;
-  timezone?: string;
-  modDatetime?: string | Date | null;
-  /** dayjs 格式串，默认只显示日期 */
-  dateFormat?: string;
 };
 
-const {
-  pubDatetime,
-  modDatetime,
-  size = "sm",
-  class: className = "",
-  timezone: postTimezone,
-  dateFormat = "YYYY-MM-DD",
-} = Astro.props;
+const { pubDatetime, size = "sm", class: className = "" } = Astro.props;
 
 const t = useTranslations(Astro.currentLocale ?? config.site.lang);
 
-const isModified = modDatetime && modDatetime > pubDatetime;
+// 时区统一取站点配置，不支持按篇覆盖
+const datetime = dayjs(pubDatetime).tz(config.site.timezone);
 
-const datetime = dayjs(isModified ? modDatetime : pubDatetime).tz(
-  postTimezone ?? config.site.timezone
-);
-
-const date = datetime.locale(t.dateLocale).format(dateFormat);
+const date = datetime.locale(t.dateLocale).format(DATE_FORMAT);
 ---
 
 <div class:list={["text-muted-foreground flex items-center", className]}>

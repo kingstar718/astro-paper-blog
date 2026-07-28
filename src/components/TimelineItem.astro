@@ -1,18 +1,14 @@
 ---
 import Datetime from "./Datetime.astro";
 
-// 时间线上的一条：圆点 + 时间（+ 可选类型标签），正文由 slot 提供。
-// 文章用实心点、短文用空心点，首页混排时靠这个区分。
+// 时间线上的一条：圆点 + 时间，正文由 slot 提供。
+// 文章用实心点、短文用空心点，首页混排时只靠这个区分，不再标注类型。
 type Props = {
   kind: "post" | "note";
   pubDatetime: Date | string;
-  modDatetime?: Date | string | null;
-  timezone?: string;
-  /** 类型标签，仅在文章短文混排时需要 */
-  label?: string;
 };
 
-const { kind, pubDatetime, modDatetime, timezone, label } = Astro.props;
+const { kind, pubDatetime } = Astro.props;
 ---
 
 <article class="relative pb-6 last:pb-0">
@@ -23,22 +19,6 @@ const { kind, pubDatetime, modDatetime, timezone, label } = Astro.props;
       "absolute start-[calc(-1.5rem-5px)] top-[6px] size-2 rounded-full",
       kind === "post" ? "bg-accent" : "border-accent bg-background border-2",
     ]}></span>
-  <div class="text-muted-foreground flex items-baseline gap-2 text-sm">
-    <Datetime
-      pubDatetime={pubDatetime}
-      modDatetime={modDatetime}
-      timezone={timezone}
-      dateFormat="YYYY-MM-DD HH:mm:ss ddd"
-      class="tabular-nums"
-    />
-    {
-      label && (
-        <>
-          <span aria-hidden="true">·</span>
-          <span>{label}</span>
-        </>
-      )
-    }
-  </div>
+  <Datetime pubDatetime={pubDatetime} class="tabular-nums" />
   <slot />
 </article>

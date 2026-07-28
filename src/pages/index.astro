@@ -61,19 +61,16 @@ const items: TimelineItem[] = [
   <Header />
   <main id="main-content" class="app-layout">
     <section class="pt-8 pb-6">
-      {/* 文章短文混排，靠实心点/空心点和类型标签区分 */}
+      {/* 文章短文混排，只靠实心点/空心点区分 */}
       <Timeline>
         {
           items.map(item =>
             item.kind === "post" ? (
-              <PostTimelineItem post={item.post} label={t.nav.posts} />
+              <PostTimelineItem post={item.post} />
             ) : (
               <TimelineItem
                 kind="note"
                 pubDatetime={item.note.data.pubDatetime}
-                modDatetime={item.note.data.modDatetime}
-                timezone={item.note.data.timezone}
-                label={t.nav.notes}
               >
                 {/* 段落间距收紧，并去掉首尾外边距，避免和条目间距叠加 */}
                 <div class="app-prose mt-2 max-w-none [&_p]:my-[0.45em] [&>:first-child]:mt-0 [&>:last-child]:mb-0">
