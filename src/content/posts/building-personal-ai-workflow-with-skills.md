@@ -6,6 +6,10 @@ draft: false
 aiGenerated: true
 description: 介绍 my-skills 项目的设计思路：如何用 SKILL.md 将 git 提交规范、博客写作流程和终端状态栏固化为可复用的 AI 指令，以及安全优先、可审计、跨平台的设计原则。
 updates:
+  - datetime: "2026-07-28 15:43"
+    action: 修改
+    note: "更新记录一节改写为三段式演进，示例换成 frontmatter 的 updates 数组；修正流程里过时的 UTC 时间和 <details> 说法"
+    agent: "Claude Code 2.1.220 / claude-opus-5"
   - datetime: "2026-07-28 12:14"
     action: 修改
     note: "更正已失效的举例：schema 移除 modDatetime、tags 后，相关描述改为当前仍成立的说法"
@@ -88,29 +92,31 @@ Agent 版本和模型名按当前运行环境自动探测，会话内缓存复�
 一篇新文章的完整流程：
 
 1. 确认 `src/content/posts/` 下无同名文件
-2. 填充 frontmatter 字段（对齐 Zod schema），时间取当前 UTC
+2. 填充 frontmatter 字段（对齐 Zod schema），时间取当前北京时间
 3. 正文按 Markdown 写作约定组织
-4. 文末追加 `<details>` 更新记录块
+4. 在 frontmatter 的 `updates` 里追加一条记录
 5. 本地 `pnpm build` 验证
 6. 逐文件暂存、确认 diff、提交推送
 
 每一步都写成明确指令，不留给 AI "自己判断"的空间。
 
-更新记录块是这个 skill 最有意思的设计。最初用 HTML 注释（`<!-- -->`），对读者不可见。迭代后改为可见的 `<details>` 折叠表格：
+更新记录是这个 skill 最有意思的设计，也是改得最多的地方。最初用 HTML 注释（`<!-- -->`），对读者不可见；后来改成正文里可见的 `<details>` 折叠表格；现在它是 frontmatter 里的一个数组：
 
-```markdown
-<details>
-<summary>📝 更新记录（最近：2026-07-07 17:23:22）</summary>
-
-| 时间                | 操作 | 说明               | Agent                                     |
-| ------------------- | ---- | ------------------ | ----------------------------------------- |
-| 2026-07-07 17:29:30 | 修改 | 补充第三节示例代码 | Claude Code 2.3.0 / claude-opus-4-8       |
-| 2026-07-07 17:23:22 | 创建 | 初次生成全文       | Claude Code 2.1.201 / deepseek-v4-pro[1m] |
-
-</details>
+```yaml
+updates:
+  - datetime: "2026-07-07 17:29"
+    action: 修改
+    note: 补充第三节示例代码
+    agent: "Claude Code 2.3.0 / claude-opus-4-8"
+  - datetime: "2026-07-07 17:23"
+    action: 创建
+    note: 初次生成全文
+    agent: "Claude Code 2.1.201 / deepseek-v4-pro[1m]"
 ```
 
-默认折叠只显示最新时间，点击展开查看完整历史，倒序排列。读者能看到文章的 AI 辅助历程，作者（我）翻源文件时也能快速定位上次改了什么。
+搬进 frontmatter 是因为它本来就是元数据而不是正文。写在正文里，四列表格在手机上没法看，格式写错也没人拦；换成 schema 校验的字段之后，日期格式、操作类型、说明非空都由构建把关，排版则交给组件，跟正文样式互不牵扯。
+
+页面上它收在标题下方，和日期、目录并排，默认折叠。读者能看到文章的 AI 辅助历程，作者（我）翻源文件时也能快速定位上次改了什么。
 
 写作质量也有显式标准——六条，每条带具体判断依据：
 
