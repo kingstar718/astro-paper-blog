@@ -16,4 +16,4 @@ description: "关于陆上江南和这个博客"
 - 一些中文写作和排版实验
 - 后续慢慢补上的个人观察
 
-如果想联系我，可以通过页脚的 GitHub 或邮箱入口。
+如果想联系我：[GitHub](https://github.com/kingstar718) · [邮箱](mailto:kingstar718@foxmail.com)

@@ -31,7 +31,6 @@ const config: ResolvedAstroPaperConfig = {
     lightAndDarkMode: userConfig.features?.lightAndDarkMode ?? true,
     search: userConfig.features?.search ?? "pagefind",
   },
-  socials: userConfig.socials ?? [],
 };
 
 export default config;

@@ -29,8 +29,4 @@ export default defineAstroPaperConfig({
     lightAndDarkMode: true,
     search: "pagefind",
   },
-  socials: [
-    { name: "github", url: "https://github.com/kingstar718" },
-    { name: "mail",   url: "mailto:kingstar718@foxmail.com" },
-  ],
 });

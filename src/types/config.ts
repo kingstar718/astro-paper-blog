@@ -48,28 +48,11 @@ interface FeaturesConfig {
   search?: "pagefind" | false;
 }
 
-interface SocialLink {
-  /**
-   * Must match an SVG filename in src/assets/icons/socials/.
-   * e.g. "github" → src/assets/icons/socials/github.svg
-   */
-  name: string;
-  url: string;
-  /**
-   * Accessible label for the icon link (aria-label, title attribute).
-   * Auto-generated if omitted: "{site.title} on GitHub", "Send an email to {site.title}", etc.
-   * Override when the default wording doesn't fit.
-   */
-  linkTitle?: string;
-}
-
 interface AstroPaperConfig {
   site: SiteConfig;
   posts?: PostsConfig;
   notes?: NotesConfig;
   features?: FeaturesConfig;
-  /** Social profile links shown in footer */
-  socials?: SocialLink[];
 }
 
 type ResolvedSiteConfig = Required<
@@ -85,7 +68,6 @@ export interface ResolvedAstroPaperConfig {
   posts: Required<PostsConfig>;
   notes: Required<NotesConfig>;
   features: Required<FeaturesConfig>;
-  socials: SocialLink[];
 }
 
 /**
