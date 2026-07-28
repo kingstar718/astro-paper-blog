@@ -1,11 +1,15 @@
 ---
-pubDatetime: "2026-07-28 11:29"
+pubDatetime: "2026-07-28 17:55"
 title: AstroPaper 博客改造日志
 featured: false
 draft: false
 aiGenerated: true
 description: 从 AstroPaper 模板出发，把博客打磨成顺手的中文站点。
 updates:
+  - datetime: "2026-07-28 17:55"
+    action: 排版
+    note: "补记 7-28 全天改动（日期收敛、手机端发布与 CI 兜底、代码块配色、AI 角标、更新记录搬进 frontmatter、列表页排版、两处移除），并整体压缩旧条目篇幅"
+    agent: "Claude Code 2.1.220 / claude-opus-5"
   - datetime: "2026-07-28 15:50"
     action: 修改
     note: "精简 description 至一行"
@@ -20,7 +24,7 @@ updates:
     agent: "Claude Code 2.1.215 / claude-opus-4-8"
   - datetime: "2026-07-21 11:02"
     action: 排版
-    note: "按日期倒序重构全文结构：日期作为章节标题（##），改动点作为子标题（###），并将字体主题条目并入各自日期"
+    note: "按日期倒序重构全文结构：日期作为章节标题（##），改动点作为子标题（###）"
     agent: "Claude Code 2.1.215 / claude-opus-4-8"
   - datetime: "2026-07-21 10:52"
     action: 修改
@@ -28,308 +32,154 @@ updates:
     agent: "Claude Code 2.1.215 / claude-opus-4-8"
 ---
 
-基于 [AstroPaper](https://github.com/satnaing/astro-paper) 模板搭建了这个博客。AstroPaper 是一个极简、响应式、无障碍友好的 Astro 博客主题，支持亮暗模式切换，自带文章系统、标签、归档、搜索、RSS 等功能。
-
-这篇日志持续记录对它的改动，会随提交不断更新，按日期倒序排列。
+基于 [AstroPaper](https://github.com/satnaing/astro-paper) 模板搭建了这个博客。这篇日志记录对它的改动，按日期倒序，随提交更新。
 
 ## 2026-07-28
 
+### 全站只保留一个日期字段
+
+原本有 `pubDatetime`、`modDatetime`、`timezone` 三个日期相关字段，排序读前者、页面显示读后者——两者能不一致，首页顺序因此是错的，一直没人发现。
+
+收敛成唯一的 `pubDatetime`，精确到分钟，**格式与页面上显示的完全一样**（`"YYYY-MM-DD HH:mm"`），按站点时区解读，写 frontmatter 不用再手算 UTC 偏移。schema 里加了防呆：不加引号会被 YAML 解析成时间戳、格式写错会直接构建失败，并提示正确写法。
+
+### 手机端发短文，CI 补上兜底
+
+短文现在可以从手机发：iOS 快捷指令直接调 GitHub 的 contents API 提交文件，推到 `main` 后 Cloudflare Pages 自动构建。这条链路和它的三个坑单独写了一篇——[从手机发一条短文](/posts/publishing-notes-from-phone)。
+
+为它给 CI 加了两样东西：
+
+- **`push` 到 main 也触发**。原来只在 pull request 时跑，直推完全没有校验；而手机端不会先本地构建，CI 是唯一的拦截点
+- **内容收录检查**。找出 `src/content` 下不以 `_` 开头、又不是 `.md`/`.mdx` 的文件就让构建失败。手机端文件名一旦混进空格，URL 会被截断、扩展名丢失，GitHub 照样返回 `201`，但文件不匹配内容集合的 glob，构建静默忽略它——发出去了，站点上什么都没有
+
 ### 撤掉 remark 管线，回到 Astro 7 原生引擎
 
-7 月 21 日那条写着「本站重度依赖 `remark-toc`、`remark-collapse`」，这个判断是错的。`remark-collapse` 的触发条件配的是标题为 "Table of contents"，`remark-toc` 也只在同名标题下插入列表——而全站没有任何一篇文章写过这种标题，目录早就改由 `TableOfContents.astro` 从 `headings` 生成。两个插件从配上去那天起就是空转的。
+7 月 21 日那条写着「本站重度依赖 `remark-toc`、`remark-collapse`」，这个判断是错的。两个插件的触发条件都是标题为 "Table of contents"，而全站没有任何一篇文章写过这种标题——目录早就改由组件从 `headings` 生成。它们从配上去那天起就是空转的。
 
-于是删掉 `remark-toc`、`remark-collapse`、`@astrojs/markdown-remark` 三个依赖，连同 `src/remark-collapse.d.ts` 和 `markdown.processor` 整段配置，Markdown 渲染交还给 Astro 7 原生的 Satteri 引擎。
-
-换引擎后逐页比对了构建产物，本以为会是零差异，结果发现一处真实变化：直引号的渲染。源文件里写的是 `"理解"`，旧的 remark 管线把前后两个都渲染成右弯引号 `”理解”`，Satteri 则正确配对成 `“理解”`。全站共 37 处成对引号的开引号因此被修正，分布在两篇文章里。另两篇文章虽然也有直引号，但都落在代码块或行内代码中，智能标点本就不处理，所以不受影响。等于顺手修了一个一直没注意到的中文排版 bug。
-
-除此之外的差异只有两类，都不影响渲染：块级标签之间多了换行，以及 `>` 从字面量改为 `&gt;` 转义。代码块内容逐字节比对（连同 shiki 的 span 结构）除实体写法外完全一致。
+删掉三个依赖和整段 `markdown.processor` 配置，渲染交还给 Astro 7 原生的 Satteri 引擎。逐页比对构建产物，本以为零差异，结果发现一处真实变化：源文件里的直引号 `"理解"`，旧管线把前后两个都渲染成右弯引号 `”理解”`，Satteri 正确配对成 `“理解”`。全站 37 处开引号因此被修正——顺手修了一个一直没注意到的中文排版 bug。
 
 ### 清掉上一轮重构的残留
 
-上次大改删了标签、返回按钮等六项功能，扫尾没做干净。这次按「零引用」标准过了一遍：
+上次大改删了标签、返回按钮等六项功能，扫尾没做干净。按「零引用」标准过了一遍，删掉 `ResponsiveTable.astro`、两个图标、`Main.astro` 两个从没被传过的 props、若干 i18n 键，以及 `Layout.astro` 里指向不存在的 `favicon.ico` 的 `<link>`（每次访问白吃一个 404）。
 
-- `ResponsiveTable.astro`（上游模板遗留，全仓库含 md/mdx 无引用）、`IconHash.svg`、`IconRss.svg`
-- `Main.astro` 的 `pageTitle` / `pageDesc` 两个 props 及对应 markup——四个调用点全都只传 `class`
-- i18n 的 `nav.home`、`pagination.page`
-- `Header.astro` 里「归档移到页脚」的注释，页脚并没有归档
-- `Layout.astro` 指向 `favicon.ico` 的 `<link>`，而 `public/` 下只有 `favicon.svg`，每次访问白吃一个 404
+两个 schema 字段一并收掉：文章的 `author` 五篇都写了但从没被读取（渲染时用的是站点配置），短文的 `title` 从不渲染。`Datetime.astro` 里写死的 `.locale("zh-cn")` 也挪进了 i18n。
 
-两个内容 schema 字段也一并收掉：文章的 `author` 五篇都写了但从没被读取过（渲染时用的是 `config.site.author`），短文的 `title` 从不渲染却有一篇写了，写了也看不见。
+### 代码块换配色，顺带修掉一条常驻的滚动条
 
-### dayjs 语言不再硬编码
+原来的 `min-light` / `min-dark` 饱和度太高——统计下来全站出现最多的是紫色 `#B392F0`（164 次），其次是亮红和橙。这些颜色铺在大段中文里很跳。换成 `vitesse-light` / `vitesse-dark`，低饱和偏暖，跟纸感底色是一路的。底色也不再取主题自带的纯白 / 纯黑，改用单独的 `--code-background`，只比页面底色深一档。
 
-`Datetime.astro` 里写死的 `.locale("zh-cn")` 挪进 i18n，成为 `dateLocale` 键，zh 是 `zh-cn`、en 是 `en`。目前只有 zh 一条路由，没有实际影响；但 `en.ts` 那套文案一直在维护，哪天真开英文路由，星期几不会再是中文。
+顺带修了个一直存在的 bug：行内代码的 `0.15em` 左右外边距没有在代码块里被重置，叠在 `flex-basis: 100%` 上，导致**任何长度的代码块都恒定溢出 0.3em**，底部永远挂着一条横向滚动条。
+
+### 文章的元数据归位
+
+两件相关的事。
+
+**标题旁的 AI 角标。** 新增 `aiGenerated` 字段，为真时在标题右侧渲染一个很轻的 `AI`。它不写进 `title` 字符串，所以 `<title>`、RSS 标题和搜索索引都不受影响。不设默认值——AI 写的和人写的都要显式表态，免得默认值把哪一边标错。
+
+**更新记录搬进 frontmatter。** 原本是正文里手写的 `<details>` + Markdown 表格，四列在手机上没法看，折叠三角接不了主题色，内容还会被 pagefind 当正文索引（搜「初次生成全文」能搜出一堆）。改成 `updates` 数组由组件渲染：日期复用 `pubDatetime` 的校验器，操作是枚举，说明校验非空，写错构建即失败。位置也从文末挪到标题下方，和日期、目录并排成一行。
+
+这两个折叠块都没有用 `<details>`：它的按钮和面板必须是父子，面板要整行展开就得让整块变成整行宽，按钮会被挤到下一行。改成按钮 + 面板两个兄弟元素，外层 `display: contents`，按钮留在行内不动。
+
+### 列表页的层级与留白
+
+首页噪音的根源是**简介和标题同色**，两者等重，整页读起来是一片。新增比 `muted-foreground` 更弱的 `--faint` 色标，层级理顺成三级递减：
+
+```text
+标题  #2c2a26
+简介  #5f5a52
+日期  #8a8377
+```
+
+短文的字号也归了位。它原本套着 `app-prose`，用的是文章详情页的阅读态字号（17/18px、行高 1.8），放进索引列表后比旁边的简介大 2px、松 6px——同一条时间线上混着两套字号。压回 16px。
+
+其余几处：
+
+- `description` 加 `max(45)` 校验，六篇全部重写。原来 44～126 字，现在 31～40，时间线上都是一行
+- 时间线竖线原本是容器的左边框，边框必然贯穿整个容器、从第一个圆点上方探出一截。改成绝对定位的竖条，从圆心起画
+- 页尾的分页和统计合并成一行，统一到 14px 弱化色；分页只留箭头，去掉「上一页 / 下一页」字样
+- `perPage` 从 4 提到 10（短文 15）。原来它和 `perIndex` 都是 4，列表页跟首页显示的一样多，翻页毫无意义
+
+### 又减掉两样
+
+**站点图标**。一直用着 Astro 模板自带的 logo，试了好几轮替代方案都不满意，索性整个移除，标签页显示浏览器默认图标。
+
+**页脚的 GitHub 与邮箱**。两个链接不值得一套组件 + 配置 + 类型 + 图标资源的机制，直接写在关于页的正文里就够了。
 
 ## 2026-07-21
 
-### 首页改为文章 + 短文统一时间线
+### 三个列表页统一为时间线
 
-把原本分散的「首页 / 文章列表 / 归档」三处看文章的入口合并：首页直接是一条按时间倒序的时间线，文章与短文混排。文章显示为标题卡片，短文（新增的 `notes` 内容集合）在列表里直接内联展开正文，标题可有可无。首页文章、短文各取最近 `perIndex` 条。
+原本「首页 / 文章列表 / 归档」三处入口各说各话。合并为一条按时间倒序的时间线：首页文章与短文（新增的 `notes` 集合）混排，文章显示标题，短文直接内联展开正文。文章页改成参考 [Lapis](https://www.lapis.cafe/) 的年份时间轴，独立归档页（`/archives`）连同相关配置一并删除——文章页本身就是按日期归档的视图。
 
-导航也随之精简为「文章 / 短文 / 标签 / 关于」——首页入口交给左上角站点标题，不再单列。文章、短文各有独立列表页；这些列表页（含标签、关于、搜索）统一去掉了面包屑、页面大标题和描述，进页直接是内容本身。
-
-### 文章页改造为年份时间轴，移除独立归档
-
-文章页从「完整卡片列表」改成参考 [Lapis](https://www.lapis.cafe/) 主题的时间轴样式：按年份分组，年份头是大号年数 + 当年篇数 + 一条填充横线；每年一列，列左侧一条细竖线，每篇是「`MM-DD` 等宽日期 + 标题」一行，整行 hover 高亮、标题变强调色，精选文章标题前带一个星标。
-
-由于文章页本身已经是按日期归档的视图，原来的独立归档页（`/archives`）连同 `showArchives` 配置、页脚归档入口一并删除，归档能力完全并入文章页。分组用的 `getPostsByGroupCondition` 移到 `src/utils/` 共用。
-
-### 列表排版精简与死代码清理
-
-时间线条目原本「标题 / 日期 / 描述」三行偏臃肿，改为标题与日期同一行（日期小号灰字、右对齐、去掉日历图标），描述另起一行。为此给 `Datetime` 加了 `icon` 开关，只在列表场景关掉图标，文章详情页日期不受影响。条目间距从 `my-6` 收到 `my-4`，正文段落间距从默认 `1.25em` 收到 `0.8em`。
-
-顺手清理：删除 `Card` 组件中随文章页改造后不再使用的 `compact` 变体，以及一批因页面调整而失效的 i18n 键（首页 `home.*`、各列表页的 `*Desc`、`nav.archives` 等）。
+列表页（含关于、搜索）统一去掉面包屑、页面大标题和描述，进页直接是内容。
 
 ### 升级到 Astro 7
 
-把 Astro 从 6.4.8 升级到 7.1.1，`@astrojs/mdx` 从 5 升到 7，sitemap、rss 一并跟到兼容版本。Node 要求不变（`>=22.12.0`）。
+Astro 6.4.8 → 7.1.1，`@astrojs/mdx` 5 → 7，sitemap、rss 跟到兼容版本。当时为了稳妥保留了 remark 管线（一周后发现它本就是空转的，见上）。升级前就存在的 `tailwindcss()` Vite 插件类型报错，随 Vite 8 对齐后自动消失。
 
-Astro 7 默认改用原生的 Satteri 引擎渲染 Markdown，不再走 remark/rehype。本站重度依赖 `remark-toc`、`remark-collapse` 和 shiki 的自定义 transformer，因此选择保守路径：安装 `@astrojs/markdown-remark`，把 markdown 配置迁移到 `processor: unified({ remarkPlugins: [...] })`，shiki 配置保持不动。现有高亮和插件行为完全不变。
+### i18n 精简与模板残留清理
 
-顺带解决了升级前就存在的 `tailwindcss()` Vite 插件类型报错——它随 Vite 8 与 `@tailwindcss/vite` 4.3.3 对齐后自动消失。
+i18n 原本用 `import.meta.glob` 动态扫描语言目录，对两种语言来说是过度设计，改为静态 import。硬编码在组件里的几处文案（首页「全部文章」、代码块「复制 / 已复制」）也收回 i18n，内联脚本通过 `data-*` 拿翻译值——从此「改文案 = 只改 i18n」才真正成立。
 
-### 精简 i18n 与移除模板残留
+模板残留一并清掉：Docker 三件套、commitizen 配置、上游 CHANGELOG 与 Lighthouse 徽章、`.github/` 下的开源协作模板和仍指向原作者的 `FUNDING.yml`。另外新增了 `docs/config-map.md`——一张「想改 X 该去哪个文件」的对照表，解决配置分散在多处不好找的问题。
 
-i18n 加载机制过度设计：原本用 `import.meta.glob` 动态扫描语言目录，对只有中英两种语言来说没必要。改为直接静态 import `zh` 和 `en`，删除从未被调用的 `format.ts`（`tplStr` 死代码），并清理了一批没有引用的翻译键。
+### 文章目录与导航栏
 
-项目里还堆着不少模板残留，一并清掉：
+目录数据来自 `render()` 返回的 `headings`，构建期生成，不在客户端解析 DOM。桌面端在正文右侧悬浮并随滚动高亮当前章节，移动端在正文顶部内联折叠。只列 `h2`/`h3`，标题少于两个不显示。
 
-- Docker 相关（`Dockerfile`、`docker-compose.yml`、`.dockerignore`）——本站不用容器部署
-- `cz.yaml`（commitizen 配置，实际未安装）、上游的 `CHANGELOG.md`、`AstroPaper-lighthouse-score.svg` 徽章
-- `.github/` 下的开源协作模板（贡献指南、行为准则、issue/PR 模板），以及仍指向原作者的 `FUNDING.yml`
-
-最后对全仓做了一次 prettier 格式化，把此前积累的格式漂移统一掉。
-
-### UI 文案收敛与配置地图
-
-站点本有完整的 i18n 机制，但个别文案仍硬编码在组件里——首页的“全部文章”按钮、文章页的“复制 / 已复制”。把它们收回 i18n（内联脚本通过 `data-*` 属性拿到翻译值），从此“改文案 = 只改 i18n”这条规则才真正成立。
-
-另外新增了 `docs/config-map.md` 配置地图：用一张“想改 X 该去哪个文件”的对照表，解决设置分散在 `astro-paper.config.ts`、`theme.css`、`astro.config.ts` 等多处、不好找的问题，并在相关文件之间加了交叉引用注释。
-
-### 文章目录（TOC）
-
-给文章页加了目录。数据来自 `render()` 返回的 `headings`，构建期直接生成，不在客户端解析 DOM。
-
-- **桌面端**：在正文右侧空白区悬浮，随滚动高亮当前章节（scroll-spy），可折叠，展开状态记在 `localStorage`
-- **移动端**：正文顶部内联折叠，默认收起，点开跳转
-
-只列 `h2` / `h3`，标题少于两个的文章不显示目录。
-
-### 导航栏重新设计
-
-旧导航栏把“去页面”和“就地操作”混在一起：文章、标签、关于是文字，归档却是图标，移动端又换成另一套两列网格，缺乏统一心智。
-
-重新按“导航是文字、工具是图标”分组：
-
-- 桌面端：文章、标签、关于、归档四个文字导航并列，用分隔线隔开搜索、主题切换两个图标工具
-- 移动端：搜索和主题图标常驻，汉堡按钮展开文字导航下拉，与桌面端保持同一套结构
-
-同时把选中项的波浪下划线改为强调色加粗，并清理了重构后不再使用的 `IconArchive`、`IconUnderline` 图标和一个未定义的遗留样式类。
+导航栏原本把「去页面」和「就地操作」混在一起——文章、关于是文字，归档却是图标，移动端又换成另一套网格。重新按「导航是文字、工具是图标」分组，桌面端与移动端共用同一套结构。
 
 ## 2026-06-22
 
 ### 字体 · Noto 全家族与中文分包
 
-最终方案统一使用 Noto 字体家族：
+字体折腾了两个月，最终定在 Noto 全家族：正文 `Noto Serif` + `Noto Serif SC`，代码与等宽数字 `Noto Sans Mono`，全部自托管在 `public/fonts/`，零外部请求。
 
-- 英文正文使用 `Noto Serif`
-- 简体中文使用 `Noto Serif SC`
-- 行内代码、代码块和等宽数字使用 `Noto Sans Mono`
+中文用 `unicode-range` 分包成 101 个 WOFF2，浏览器按页面实际出现的字符只下载对应分片。完整字库约 5.75 MB 是服务器上的总量，不是单页下载量。方案细节和量化对比另有一篇：[中文网站自托管变量字体方案](/posts/self-hosted-chinese-variable-fonts)。
 
-三套字体全部托管在站点自身的 `public/fonts/` 目录，不请求 Google Fonts 或其他境外字体 CDN。
-
-中文字体采用 `unicode-range` 分包，将 Noto Serif SC 拆成 101 个 WOFF2 文件。浏览器会根据当前页面出现的字符，只下载对应分片，而不是一次加载完整字库。
-
-字体资源整体情况如下：
-
-```text
-Noto Serif       2 个拉丁字符分片    约 0.21 MB
-Noto Serif SC    101 个中文分片      完整约 5.75 MB
-Noto Sans Mono   2 个拉丁字符分片    约 0.18 MB
-```
-
-这里的 5.75 MB 是服务器保存的完整中文字库总量，不是单个页面的下载量。已加载的分片可以被浏览器长期缓存，访问其他文章时只补充尚未缓存的字符分片。
-
-最终字体变量为：
-
-```css
---font-app:
-  "Noto Serif Variable", "Noto Serif SC Variable", "Songti SC", "STSong",
-  "Source Han Serif SC", "Noto Serif CJK SC", "SimSun", serif;
-
---font-code:
-  "Noto Sans Mono Variable", ui-monospace, "Cascadia Mono", "Cascadia Code",
-  monospace;
-```
-
-原来的 JetBrains Mono 文件和声明已经移除。Tailwind 的 `font-mono` 也指向 `--font-code`，归档日期等界面元素会和代码区域使用同一套等宽字体。
-
-字体 CSS 最初通过全局样式中的 `@import` 加载，但经过 Tailwind 和 PostCSS 展开后触发了 `@import must precede all other statements` 警告。最终改为在 `Layout.astro` 的 `<head>` 中加载三份同源字体样式表，并通过 `getAssetPath()` 生成路径，以兼容子目录部署。
+字体 CSS 一度通过全局样式的 `@import` 加载，被 Tailwind 展开后触发 `@import must precede all other statements`，最终改为在 `Layout.astro` 的 `<head>` 里加载三份同源样式表。
 
 ## 2026-05-30
 
 ### 文章页脚本幂等化
 
-继续清理文章页的客户端脚本。之前的实现每次进入文章页都会重新创建阅读进度条、重新给标题追加 `#` 锚点、重新包裹代码块并插入复制按钮；在启用 Astro 客户端路由后，来回切页时有重复插入 DOM 和重复绑定事件的风险。
+启用客户端路由后，来回切页会重复插入 DOM、重复绑定事件。把脚本改成「可重复执行但结果不重复」：进度条用固定 ID 复用，监听器重绑前先移除旧实例，标题锚点和代码块按钮仅在缺失时插入。
 
-这次把脚本改成“可重复执行但结果不重复”：
+### 模板内容下线
 
-- 阅读进度条改为固定 ID，若已存在则复用
-- 滚动监听和 `astro:after-swap` 监听在重新绑定前先移除旧实例
-- 标题锚点仅在缺失时追加
-- 代码块按钮仅在不存在时插入，外层包裹节点也只创建一次
+5 篇 AstroPaper 模板文章全部转为草稿并移出 `src/content/posts/`，只留在 `docs/templates/` 作参考。公开页面从 23 页收缩到 14 页，搜索索引也随之只保留真正对外的内容。
 
-顺手把代码块复制按钮文案从英文 `Copy / Copied` 改成中文 `复制 / 已复制`，和整站语言保持一致。
-
-本地预览里来回切换文章页后复查，进度条、标题锚点和复制按钮数量都保持不变，说明这部分脚本已经稳定下来。
-
-### 模板文章下线
-
-又做了一轮“减法”，主要目的是让公开内容和实际站点风格更一致。
-
-先把还在公开状态的 5 篇 AstroPaper 模板文章全部改为草稿：动态 OG、依赖更新、Git Hooks 日期、Giscus 评论、LaTeX 公式。它们仍然保留在仓库里，后面需要参考时随时可翻，但不再出现在首页、文章列表、归档、RSS 和搜索结果中。
-
-这样处理后，首页公开文章只剩真正属于当前博客的内容，站点气质会更统一，不会再混入一批模板作者的英文教程。
-
-本轮调整后重新执行 `pnpm build`，`astro check`、静态构建和 Pagefind 索引生成均通过；公开页面数量从 23 页收缩到 14 页，搜索索引也随之只保留当前真正对外展示的文章内容。
-
-### 项目说明与内容目录收口
-
-继续把仓库从“套了 AstroPaper 的模板项目”整理成真正属于这个博客的项目。
-
-首先重写了 `README.md`。旧 README 仍然保留大量原模板说明，包括已经删除的默认 OG 图片、动态 OG 功能、原作者联系方式和模板初始化命令。新版本改为说明当前博客的定位、目录结构、常用命令、写作方式和配置入口，并明确部署时发布 `dist/` 目录。
-
-About 页面也从一句占位介绍扩展为真正的个人博客说明：这个站点写什么、为什么保留静态博客形态、以及读者能在这里看到哪些内容。
-
-模板文章则整体移出正式内容目录：
-
-```text
-src/content/posts/        # 只放正式博客文章
-docs/templates/posts/     # 保留 AstroPaper 模板文章作为参考资料
-```
-
-这样 `src/content/posts/` 里只剩公开内容，不再混着一堆草稿模板文件；日后查找、搜索和新增文章都会更清楚。
-
-最后顺手修了构建脚本。以前 `pnpm build` 会在 Pagefind 索引生成后执行 `cp -r dist/pagefind public/`，把构建产物再写回源码目录。现在搜索索引只保留在 `dist/pagefind/`，部署 `dist/` 即可，不再污染 `public/`。
-
-搜索页开发态提示也改成中文。至此，模板尾巴又少了一截。
-
-### 清理测试内容与历史计划
-
-继续清掉几处不再适合留在正式站点里的内容。
-
-`public/pagefind/` 是旧构建脚本留下的本地搜索索引，现在构建产物只保留在 `dist/pagefind/`，因此直接删除本地残留目录，避免把生成文件误认为源码资产。
-
-`docs/superpowers/` 里保存的是已经失效的早期改造计划。为了避免后续误读，删除了这些过期文档。
-
-社交图标也继续精简：`linkedin.svg` 和 `x.svg` 已经没有实际配置引用，页脚只保留 GitHub 和邮箱，所以这两个图标文件一并移除。
-
-最后把 Markdown 功能测试文章移出公开内容目录，放到 `docs/testing/markdown-feature-test.md`。它仍然可以作为排版回归测试参考，但不再作为博客文章公开展示。
-
-### 字体 · 暂时回到系统字体
-
-为了先保证构建链路简单可靠，中文正文暂时改回系统衬线字体栈：
-
-```css
---font-app:
-  "Songti SC", "STSong", "Source Han Serif SC", "Noto Serif CJK SC", "SimSun",
-  serif;
-```
-
-代码字体继续使用本地 JetBrains Mono。这个阶段不再追求各平台字形完全一致，优先保证零外部请求和较小的资源体积。
+README 从原模板说明重写为这个博客自己的定位与目录结构。构建脚本也修了：以前 `pnpm build` 会把 Pagefind 索引再拷回 `public/`，把产物写进源码目录，现在只保留在 `dist/`。
 
 ## 2026-05-29
 
 ### 字体 · 在体积和一致性之间反复取舍
 
-为了降低传输体积，一度移除本地中文字体，让不同平台分别回退到 `PingFang SC`、`Microsoft YaHei` 和 `system-ui`。这种方式最轻，但不同系统上的中文观感差异较大，也失去了想要的宋体阅读风格。
-
-之后尝试通过 Fontsource 引入 Noto Sans 和 Noto Serif SC，只保留现代浏览器需要的 WOFF2。中文字体体积降到约 3.06 MB，但直接引用 `node_modules` 内部字体路径不够稳，构建产物也不容易验证。
+一度移除本地中文字体、让各平台回退到系统字体，最轻，但不同系统的中文观感差异太大，也失去了想要的宋体阅读感。之后尝试用 Fontsource 引入，体积降到约 3.06 MB，但直接引用 `node_modules` 内部路径不够稳。
 
 ## 2026-05-25
 
 ### 移除分享组件
 
-删除了文章页的"分享这篇文章"功能——Twitter/Facebook 等平台在国内基本不用，浏览器自带复制链接足够了。
+删掉文章页的「分享这篇文章」——Twitter/Facebook 等平台国内基本不用，浏览器自带复制链接足够了。连带清掉 `ShareLinks.astro`、相关配置与类型、i18n 键，以及四个纯分享用途的 SVG。
 
-具体清理：删除 `ShareLinks.astro` 组件及其在文章页的引用，移除 `astro-paper.config.ts` 和类型定义中的 `shareLinks` 配置，删除 i18n 中 `sharePostIntro` 等翻译键，清理 facebook、telegram、pinterest、whatsapp 四个纯分享用途的 SVG 图标。
+顺手把页脚的「版权所有 保留所有权利」改回英文——中文法律措辞放在个人博客上太突兀。
 
-顺手把 zh.ts 中页脚的"版权所有 保留所有权利"改回英文 `Copyright / All rights reserved.`——中文法律措辞放在个人博客上太突兀。
+### 配置修正与本地编译
 
-### 精简社交链接
+修正两项残留的模板配置（`profile` 和 `editPost.url` 仍指向原作者），About 页从英文模板介绍重写为个人标识。
 
-页脚社交图标从 4 个（GitHub、X、LinkedIn、邮箱）精简为 2 个，去掉国内基本不用的 X 和 LinkedIn，只保留 GitHub 和邮箱，并替换为实际地址：
-
-- GitHub: `https://github.com/kingstar718`
-- 邮箱: `kingstar718@foxmail.com`
-
-配置文件从 `astro-paper.config.ts` 的 `socials` 数组中移除对应条目即可，组件层面自动适配。
-
-### 配置修正与内容清理
-
-修正了两项残留的模板配置：
-
-- `profile` 链接从 `https://satna.ing` 改为 `https://github.com/kingstar718`
-- `editPost.url` 从 `satnaing/astro-paper` 改为 `kingstar718/astro-paper-blog`
-
-About 页面从英文模板介绍重写为简短的个人标识：「陆上江南的博客」。
-
-`examples/` 目录下 4 篇英文示例文章和根级 3 篇模板指导文章（`adding-new-post`、`customizing-astropaper-theme-color-schemes`、`how-to-configure-astropaper-theme`）全部设为草稿（`draft: true`），不再公开显示，但保留原文件以备后续参考。
-
-### 修复本地编译
-
-本地编译一度因为构建阶段需要访问外部资源而失败。为缩短构建链路，关闭了动态 OG 图片：`features.dynamicOgImage` 设为 `false`，改用已有的静态默认图片，并删除相关图片生成路由和工具函数。
-
-**顺手清理**：`Datetime.astro` 中删除未使用的 `useTranslations` 导入和 `t` 变量，编译从 1 hint 变为 0 hints。
-
-最终编译结果：0 errors / 0 warnings / 0 hints，23 个页面正常生成。
-
-### 字体 · 本地化
-
-为了去掉外部依赖，字体开始转为本地托管。英文正文使用 Inter，代码使用 JetBrains Mono，中文使用本地 Noto Serif SC。
-
-当时的字体栈是：
-
-```css
---font-app:
-  "Noto Serif SC", "Inter", "PingFang SC", "Microsoft YaHei", system-ui,
-  sans-serif;
-
---font-code:
-  "JetBrains Mono", ui-monospace, "Cascadia Code", "Source Code Pro", monospace;
-```
-
-这套方案解决了网络依赖，但完整的 Noto Serif SC 文件约 10.7 MB，成为站点最重的静态资源。
+本地编译一度因构建阶段需要访问外部资源而失败，关闭了动态 OG 图片并删除相关路由与工具函数，构建链路缩短，结果回到 0 errors / 0 warnings / 0 hints。
 
 ## 2026-05-22
 
 ### 首页与归档布局
 
-首页大删减：去掉了 hero 区域的介绍段落、RSS 图标、社交链接。不再区分"精选文章"和"最近文章"，直接展示最新 N 篇文章流，底部保留"全部文章"链接按钮。打开即见文章列表。
-
-归档页从完整 Card 改为紧凑展示。Card 组件新增 `compact` 变体——单行，左侧 `MM-DD` 日期，右侧标题。顺手修了首篇文章与月份标签未对齐的问题。
-
-同日下午修复了 Datetime 组件中的冗余日期格式化代码。
+首页大删减：去掉 hero 介绍段落、RSS 图标、社交链接，不再区分「精选」和「最近」，打开即见文章列表。归档页从完整卡片改为紧凑单行（左侧 `MM-DD`，右侧标题）。
 
 ## 2026-05-21
 
-### 中文本地化
+### 中文本地化与字体起点
 
-新建中文翻译文件 `src/i18n/lang/zh.ts`，逐条翻译了导航、文章页、分页、首页、页脚、404 等所有 UI 文案，默认语言切换为 `zh`。
+新建 `zh.ts`，逐条翻译导航、文章页、分页、页脚、404 等全部 UI 文案，默认语言切到 `zh`，日期引入 dayjs 中文 locale。删除 `_releases`、`_color-schemes` 两个模板目录。
 
-日期格式方面，引入 dayjs 中文 locale，改为 `2025年3月22日 周六` 的形式。
-
-删除了 `_releases`（版本发布记录）和 `_color-schemes`（颜色方案文档）两个目录及其图片资源。额外清理了 about 页面和依赖更新文章中的示例图片引用。
-
-新增了一篇 Markdown 功能测试文章，验证中英文混排效果。`.gitignore` 加入 `.claude` 目录。
-
-### 字体 · 从在线字体开始
-
-字体是这个博客改动次数最多的一部分。目标一直没有变：中文适合长篇阅读，英文和代码清晰，同时保证国内访问稳定、构建过程可靠、字体体积可控。
-
-最初通过 Astro 的字体能力加载 Noto Sans SC，随后因为更偏好中文衬线字体的阅读感，换成 Noto Serif SC。CJK 字库体积很大，构建阶段下载经常超时，因此又改为通过 Google Fonts CDN 加载。
-
-这一阶段使用过 Google Sans Code 和 Noto Serif SC 的组合，但很快发现它存在两个问题：
-
-- 国内网络访问 Google Fonts 不稳定
-- 构建和运行依赖外部字体服务
+字体是这个博客改动次数最多的部分，目标始终没变：中文适合长篇阅读、英文和代码清晰、国内访问稳定、体积可控。起点是通过 Google Fonts CDN 加载 Noto Serif SC，很快撞上两个问题——国内访问不稳定，且构建依赖外部服务。后面两个月的反复，都是在解这两条。
