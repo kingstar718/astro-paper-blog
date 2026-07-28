@@ -13,6 +13,7 @@ export default {
     copied: "已复制",
     tableOfContents: "目录",
     pinTableOfContents: "固定目录",
+    aiGenerated: "本文由 AI 辅助生成",
   },
   pagination: {
     prev: "上一页",

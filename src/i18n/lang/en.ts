@@ -13,6 +13,7 @@ export default {
     copied: "Copied",
     tableOfContents: "Table of Contents",
     pinTableOfContents: "Pin table of contents",
+    aiGenerated: "Written with AI assistance",
   },
   pagination: {
     prev: "Prev",

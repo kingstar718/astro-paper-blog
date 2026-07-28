@@ -3,6 +3,7 @@ pubDatetime: "2026-07-28 11:29"
 title: AstroPaper 博客改造日志
 featured: false
 draft: false
+aiGenerated: true
 description: 持续记录从 AstroPaper 模板出发，将博客一步步打磨成顺手的中文个人站点的过程。
 ---
 

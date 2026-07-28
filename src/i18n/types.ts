@@ -16,6 +16,8 @@ export interface UIStrings {
     copied: string;
     tableOfContents: string;
     pinTableOfContents: string;
+    /** 标题旁 AI 标记的说明文字，作为 tooltip 和无障碍标签使用 */
+    aiGenerated: string;
   };
   pagination: {
     prev: string;

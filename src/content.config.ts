@@ -39,6 +39,10 @@ const posts = defineCollection({
     draft: z.boolean().optional(),
     description: z.string(),
     canonicalURL: z.string().optional(),
+    // 正文由 AI 辅助生成。标记只渲染在标题旁边，不写进 title 字符串，
+    // 因此 <title>、RSS 标题和搜索索引都不受影响。
+    // 不设默认值：真人写的和 AI 写的都要显式表态，避免默认值把哪一边标错。
+    aiGenerated: z.boolean().optional(),
   }),
 });
 

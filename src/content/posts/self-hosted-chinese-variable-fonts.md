@@ -3,6 +3,7 @@ pubDatetime: "2026-07-07 17:23"
 title: 中文网站自托管变量字体方案：unicode-range 分包实战
 featured: false
 draft: false
+aiGenerated: true
 description: 以 astro-paper-blog 和 interview-wiki 两个项目为例，详细介绍如何用 Noto 变量字体 + unicode-range 分包实现零外部请求、按需加载的中文字体方案，并与其他方案做量化对比。
 ---
 

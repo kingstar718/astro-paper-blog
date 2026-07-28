@@ -1,0 +1,16 @@
+---
+import { useTranslations } from "@/i18n";
+import config from "@/config";
+
+// 标题旁的 AI 标记：时间线和文章页共用，两处样式保持一致。
+// 刻意放在 <h1>/<h2> 外面——它不是标题的一部分，
+// 混进标题文本会一并进入 <title>、RSS、搜索索引和无障碍朗读。
+const t = useTranslations(Astro.currentLocale ?? config.site.lang);
+---
+
+<span
+  class="text-muted-foreground ms-1.5 align-[0.2em] text-[0.65em] font-normal tracking-[0.08em] select-none"
+  title={t.post.aiGenerated}
+  aria-label={t.post.aiGenerated}
+  data-pagefind-ignore>AI</span
+>

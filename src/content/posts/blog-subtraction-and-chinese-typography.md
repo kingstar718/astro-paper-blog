@@ -3,6 +3,7 @@ pubDatetime: "2026-07-27 18:34"
 title: 一次以减法为主的博客改造：时间线、去装饰与中文排版
 featured: false
 draft: false
+aiGenerated: true
 description: 把首页、文章列表、短文列表统一成一条时间线，删掉标签、返回按钮、阅读进度条等六项功能，并按中文长文阅读的要求重做了配色和排版。记录每个决定背后的数据和理由。
 ---
 

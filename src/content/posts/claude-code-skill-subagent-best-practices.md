@@ -3,6 +3,7 @@ pubDatetime: "2026-07-07 18:33"
 title: Claude Code 进阶：Skill 与 Subagent 的分工与实践
 featured: false
 draft: false
+aiGenerated: true
 description: Claude Code 的 Skill 和 Subagent 都能把重复工作固化，但解决的问题不同——Skill 省重复，Subagent 省上下文。本文整理两者的必备组成、frontmatter 规范、最佳实践与反模式，并给出何时该用哪个的判断依据。
 ---
 

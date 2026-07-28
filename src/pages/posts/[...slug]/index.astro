@@ -4,6 +4,7 @@ import PostLayout from "@/layouts/PostLayout.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import Datetime from "@/components/Datetime.astro";
+import AiBadge from "@/components/AiBadge.astro";
 import { getPostSlug } from "@/utils/getPostPaths";
 import { getSortedPosts } from "@/utils/getSortedPosts";
 import { slugifyStr } from "@/utils/slugify";
@@ -29,7 +30,8 @@ type Props = {
 
 const { post } = Astro.props;
 
-const { title, description, canonicalURL, pubDatetime } = post.data;
+const { title, description, canonicalURL, pubDatetime, aiGenerated } =
+  post.data;
 
 const { Content, headings } = await render(post);
 ---
@@ -55,7 +57,7 @@ const { Content, headings } = await render(post);
       style={{ viewTransitionName: slugifyStr(title.replaceAll(".", "-")) }}
       class="inline-block text-2xl font-bold sm:text-3xl"
     >
-      {title}
+      {title}{aiGenerated && <AiBadge />}
     </h1>
 
     <Datetime {pubDatetime} size="lg" class="my-2" />
